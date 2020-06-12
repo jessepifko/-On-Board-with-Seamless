@@ -1,4 +1,5 @@
 ﻿using System;
+using System.IO;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata;
 
@@ -25,10 +26,10 @@ namespace SeamlessLaunchpad.Models
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
+            var connectionString  = new StreamReader(File.OpenRead("secret.txt")).ReadToEnd();
             if (!optionsBuilder.IsConfigured)
             {
-#warning To protect potentially sensitive information in your connection string, you should move it out of source code. See http://go.microsoft.com/fwlink/?LinkId=723263 for guidance on storing connection strings.
-                optionsBuilder.UseSqlServer("Server=seamlesslaunchpad.database.windows.net;Database=SLPADDB;User=launchpadadmin;password=Hello123!");
+                optionsBuilder.UseSqlServer(connectionString);
             }
         }
 
