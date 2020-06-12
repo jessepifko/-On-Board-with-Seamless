@@ -1,0 +1,6 @@
+﻿@model List<StartupContainer>
+
+@foreach  (StartupContainer startup in Model)
+{
+    @startup.Fields.CompanyName
+}
