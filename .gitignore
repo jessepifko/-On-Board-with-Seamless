@@ -1,0 +1,7 @@
+.idea/
+.vs/
+Migrations/
+bin/
+obj/
+secret.txt
+api.txt
