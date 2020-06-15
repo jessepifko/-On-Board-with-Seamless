@@ -9,7 +9,7 @@ namespace SeamlessLaunchpad.Models
     {
         public string Id { get; set; }
 
-        public Startups Fields { get; set; }
+        public ApiStartup Fields { get; set; }
         public DateTime CreatedTime { get; set; }
     }
 }
