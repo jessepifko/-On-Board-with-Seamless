@@ -29,5 +29,21 @@ namespace SeamlessLaunchpad.Controllers
             StartupListRootObject returnValue = (await Utilities.GetApiResponse<StartupListRootObject>("v0/appFo187B73tuYhyg", "Master List", "https://api.airtable.com", "api_key", ApiKey)).FirstOrDefault();
             return View(returnValue.Records);
         }
+
+        public async Task<IActionResult> Index2()
+        {
+            FeedbackListRootObject test = (await Utilities.GetApiResponse<FeedbackListRootObject>("v0/appFo187B73tuYhyg", "Feedback", "https://api.airtable.com", "api_key", ApiKey)).FirstOrDefault();
+            return View(test.Records);
+        }
+
+        public async Task<IActionResult> SuccessTest()
+        {
+            StartupListRootObject startupList = (await Utilities.GetApiResponse<StartupListRootObject>("v0/appFo187B73tuYhyg", "Master List", "https://api.airtable.com", "api_key", ApiKey)).FirstOrDefault();
+            FeedbackListRootObject feedbackList = (await Utilities.GetApiResponse<FeedbackListRootObject>("v0/appFo187B73tuYhyg", "Feedback", "https://api.airtable.com", "api_key", ApiKey)).FirstOrDefault();
+            ViewBag.StartupList = startupList.Records;
+            ViewBag.FeedbackList = feedbackList.Records;
+            return View();
+        }
+
     }
 }

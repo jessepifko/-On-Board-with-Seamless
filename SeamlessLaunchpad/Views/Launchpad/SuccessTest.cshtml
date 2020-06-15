@@ -1,0 +1,11 @@
+﻿
+@{
+    ViewData["Title"] = "SuccessTest";
+   List<FeedbackContainer> feedbacks = ViewBag.FeedbackList;
+}
+
+<p>@foreach (StartupContainer startup in ViewBag.StartupList)
+{
+    <div> @SuccessPredictor.PredictSuccess(startup.Fields, feedbacks.Where(x=> x.Fields.Startup.Equals(startup.Fields.CompanyName)).ToList());</div><br />
+}</p>
+

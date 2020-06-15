@@ -1,0 +1,10 @@
+﻿@model List<FeedbackContainer> 
+@{
+    ViewData["Title"] = "Index2";
+}
+
+@foreach (FeedbackContainer f1 in Model)
+{
+    @f1.Fields.Questions <br />
+}
+
