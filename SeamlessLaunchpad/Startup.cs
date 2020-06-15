@@ -29,7 +29,8 @@ namespace SeamlessLaunchpad
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            var connectionString = new StreamReader(File.OpenRead("secret.txt")).ReadToEnd();
+            var connectionStream = new StreamReader(File.OpenRead("secret.txt"));
+            var connectionString = connectionStream.ReadToEnd();
             services.AddDbContext<SLPADDBContext>(options =>
                 options.UseSqlServer(
                     connectionString));
@@ -40,6 +41,7 @@ namespace SeamlessLaunchpad
                 .AddEntityFrameworkStores<ApplicationDbContext>();
             services.AddControllersWithViews();
             services.AddRazorPages();
+            connectionStream.Close();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

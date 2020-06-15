@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace SeamlessLaunchpad.Models
 {
-    public class Startups
+    public class ApiStartup
     {
         [JsonProperty("Company Name")]
         public string CompanyName { get; set; }
