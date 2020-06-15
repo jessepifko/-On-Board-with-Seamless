@@ -20,7 +20,9 @@ namespace SeamlessLaunchpad.Controllers
 
         static LaunchpadController()
         {
-            ApiKey = new StreamReader(System.IO.File.OpenRead("api.txt")).ReadToEnd().Trim('\n');
+            var keyStream = new StreamReader(System.IO.File.OpenRead("api.txt"));
+            ApiKey = keyStream.ReadToEnd().Trim('\n');
+            keyStream.Close();
         }
 
         // Gets first value in sequence or returns null
