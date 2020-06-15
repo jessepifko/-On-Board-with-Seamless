@@ -1,0 +1,37 @@
+﻿
+@{
+    ViewData["Title"] = "ViewDashboard";
+}
+
+@model IEnumerable<SeamlessLaunchpad.Models.Startup>
+
+<h1>ViewDashboard</h1>
+
+<table>
+    <tr>
+        <th>Name</th>
+        <th>City</th>
+        <th>Country</th>
+        <th>Summary</th>
+        <th>Themes</th>
+        <th>Tech Area</th>
+        <th>Date Added</th>
+        <th>Declared Interest</th>
+        <th>Comments</th>
+    </tr>
+    @foreach(var s in Model)
+    {
+        <tr>
+            <td>@s.Name</td>
+            <td>@s.City</td>
+            <td>@s.Country</td>
+            <td>@s.Summary</td>
+            <td>@s.Theme</td>
+            <td>@s.TechArea</td>
+            <td>@s.DateAdded</td>
+            <td>@s.InterestedPartners</td>
+            <td>@s.Comments</td>
+        </tr>
+    }
+</table>
+
