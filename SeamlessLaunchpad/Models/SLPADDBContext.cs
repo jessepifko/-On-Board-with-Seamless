@@ -1,5 +1,6 @@
 ﻿using System;
 using System.IO;
+using Microsoft.AspNetCore.SignalR.Protocol;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata;
 
@@ -23,13 +24,18 @@ namespace SeamlessLaunchpad.Models
         public virtual DbSet<AspNetUserRoles> AspNetUserRoles { get; set; }
         public virtual DbSet<AspNetUserTokens> AspNetUserTokens { get; set; }
         public virtual DbSet<AspNetUsers> AspNetUsers { get; set; }
+        public virtual DbSet<Favorites> Favorites { get; set; }
+        public virtual DbSet<Startup> Startup { get; set; }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
-            var connectionString  = new StreamReader(File.OpenRead("secret.txt")).ReadToEnd();
             if (!optionsBuilder.IsConfigured)
             {
-                optionsBuilder.UseSqlServer(connectionString);
+
+                var connectionString = new StreamReader(File.OpenRead("secret.txt"));
+                optionsBuilder.UseSqlServer(connectionString.ReadToEnd());
+                connectionString.Close();
+                
             }
         }
 
@@ -131,6 +137,46 @@ namespace SeamlessLaunchpad.Models
                 entity.Property(e => e.NormalizedUserName).HasMaxLength(256);
 
                 entity.Property(e => e.UserName).HasMaxLength(256);
+            });
+
+            modelBuilder.Entity<Favorites>(entity =>
+            {
+                entity.Property(e => e.UserId).HasMaxLength(450);
+
+                entity.HasOne(d => d.Startup)
+                    .WithMany(p => p.Favorites)
+                    .HasForeignKey(d => d.StartupId)
+                    .HasConstraintName("FK__Favorites__Start__60A75C0F");
+
+                entity.HasOne(d => d.User)
+                    .WithMany(p => p.Favorites)
+                    .HasForeignKey(d => d.UserId)
+                    .HasConstraintName("FK__Favorites__UserI__619B8048");
+            });
+
+            modelBuilder.Entity<Startup>(entity =>
+            {
+                entity.Property(e => e.City).HasMaxLength(50);
+
+                entity.Property(e => e.Comments).HasMaxLength(200);
+
+                entity.Property(e => e.Country).HasMaxLength(50);
+
+                entity.Property(e => e.DateAdded).HasColumnType("date");
+
+                entity.Property(e => e.DateRemoved).HasColumnType("date");
+
+                entity.Property(e => e.InterestedPartners).HasMaxLength(120);
+
+                entity.Property(e => e.Name).HasMaxLength(80);
+
+                entity.Property(e => e.Status).HasMaxLength(15);
+
+                entity.Property(e => e.Summary).HasMaxLength(200);
+
+                entity.Property(e => e.TechArea).HasMaxLength(120);
+
+                entity.Property(e => e.Theme).HasMaxLength(120);
             });
 
             OnModelCreatingPartial(modelBuilder);
