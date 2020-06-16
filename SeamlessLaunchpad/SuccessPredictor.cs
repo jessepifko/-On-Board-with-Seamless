@@ -8,7 +8,7 @@ namespace SeamlessLaunchpad
 {
     public class SuccessPredictor
     {
-        public static int MeasureTeam(Startups p1)
+        public static int MeasureTeam(ApiStartup p1)
         {
             int teamMeasurement = 0;
             if (p1.Team == 5)
@@ -74,7 +74,7 @@ namespace SeamlessLaunchpad
 
         }
 
-        public static int PredictSuccess(Startups s1, List<FeedbackContainer> fc1)
+        public static int PredictSuccess(ApiStartup s1, List<FeedbackContainer> fc1)
         {
             int success = MeasureTeam(s1) + MeasureInterest(fc1);
             return success;

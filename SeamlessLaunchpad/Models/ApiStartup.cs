@@ -27,7 +27,7 @@ namespace SeamlessLaunchpad.Models
         public int Uniqueness { get; set; }
         public int Team { get; set; }
         public string Raised { get; set; }
-
-        
+        [JsonProperty("Technology Areas")]
+        public string TechAreas { get; set; }
     }
 }
