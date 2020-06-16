@@ -1,0 +1,72 @@
+﻿
+@{
+    ViewData["Title"] = "ViewDashboard";
+}
+
+@model SeamlessLaunchpad.ViewModel.ViewStartupFavorite
+
+<h1>ViewDashboard</h1>
+
+<table class="table">
+    <tr>
+        <th>Name</th>
+        <th>City</th>
+        <th>Country</th>
+        <th>Summary</th>
+        <th>Themes</th>
+        <th>Tech Area</th>
+        <th>Date Added</th>
+        <th>Declared Interest</th>
+        <th>Favorite</th>
+        <th>Comments</th>
+    </tr>
+    @foreach(var s in Model.StartupsToReview)
+         {
+<tr>
+    <td><a href="/Launchpad/ViewSingle?id=@s.Id">@s.Name</a></td>
+    <td>@s.City</td>
+    <td>@s.Country</td>
+    <td>@s.Summary</td>
+    <td>@s.Theme</td>
+    <td>@s.TechArea</td>
+    <td>@s.DateAdded</td>
+    @if (Model.UserAssociation != null && s.InterestedPartners != null)
+    {
+        @if (s.InterestedPartners.Contains(Model.UserAssociation))
+        {
+            <td>@s.InterestedPartners</td>
+        }
+        else
+        {
+            <td>@s.InterestedPartners <a href="/Launchpad/AddInterest?id=@s.Id">Add @Model.UserAssociation as interested</a></td>
+        }
+    }
+    else
+    {
+        <td><a href="/Launchpad/AddInterest?id=@s.Id">Add @Model.UserAssociation as interested</a></td>
+    }
+
+    @if (Model.FavoriteStartups.Count == 0)
+    {
+        <td><a href="/Launchpad/AddFavorite?id=@s.Id">Add as Favorite</a></td>
+    }
+    else
+    {
+        @foreach (var f in Model.FavoriteStartups)
+        {
+            if (f.StartupId == s.Id)
+            {
+                <td>Favorited!</td>
+                break;
+            }
+            else
+            {
+                <td><a href="/Launchpad/AddFavorite?id=@s.Id">Add as Favorite</a></td>
+            }
+        }
+    }
+    <td>@s.Comments</td>
+</tr>
+         }
+</table>
+
