@@ -8,26 +8,42 @@ namespace SeamlessLaunchpad
 {
     public class SuccessPredictor
     {
-        public static int MeasureTeam(Startups p1)
+        public static int MeasureTeam(ApiStartup p1, List<FeedbackContainer> f1)
         {
-            int teamMeasurement = 0;
-            if (p1.Team == 5)
+                int totalfeedback = 0;
+                int teamMeasurement = 0;
+          
+            
+
+            foreach (FeedbackContainer fbc1 in f1)
+            {
+               
+                totalfeedback += fbc1.Fields.TeamStrength;
+            }
+
+            if (f1.Count == 0)
+            {
+                return p1.Team;
+            }
+             int avg = totalfeedback / f1.Count;
+             int newAvg = (avg + p1.Team) / 2;
+            if (newAvg >= 5)
             {
                 teamMeasurement = 4;
             }
-            else if (p1.Team == 4)
+            else if (newAvg == 4)
             {
                 teamMeasurement = 3;
             }
-            else if (p1.Team == 3)
+            else if (newAvg == 3)
             {
                 teamMeasurement = 2;
             }
-            else if (p1.Team == 2)
+            else if (newAvg == 2)
             {
                 teamMeasurement = 1;
             }
-            else if (p1.Team == 1)
+            else if (newAvg == 1)
             {
                 teamMeasurement = 0;
             }
@@ -52,31 +68,16 @@ namespace SeamlessLaunchpad
                 }
                 int questions = f.Questions.Count(x => x.Equals('?'));
 
-                if (questions == 1)
-                {
-                    interest += 1;
-                }
-                else if (questions == 2)
-                {
-                    interest += 2;
-                }
-                else if (questions == 3)
-                {
-                    interest += 3;
-                }
-                else if (questions == 4)
-                {
-                    interest += 4;
-                }
+                interest += questions;
             }
 
             return interest;
 
         }
 
-        public static int PredictSuccess(Startups s1, List<FeedbackContainer> fc1)
+        public static int PredictSuccess(ApiStartup s1, List<FeedbackContainer> fc1)
         {
-            int success = MeasureTeam(s1) + MeasureInterest(fc1);
+            int success = MeasureTeam(s1, fc1) + MeasureInterest(fc1);
             return success;
         }
 

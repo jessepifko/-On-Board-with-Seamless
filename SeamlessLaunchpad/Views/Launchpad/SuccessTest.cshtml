@@ -6,6 +6,7 @@
 
 <p>@foreach (StartupContainer startup in ViewBag.StartupList)
 {
+     <div>@startup.Fields.CompanyName</div>
     <div> @SuccessPredictor.PredictSuccess(startup.Fields, feedbacks.Where(x=> x.Fields.Startup.Equals(startup.Fields.CompanyName)).ToList());</div><br />
 }</p>
 
