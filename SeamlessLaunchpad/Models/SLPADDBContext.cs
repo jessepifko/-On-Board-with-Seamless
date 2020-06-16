@@ -1,4 +1,5 @@
-﻿using System;
+﻿
+using System;
 using System.IO;
 using Microsoft.AspNetCore.SignalR.Protocol;
 using Microsoft.EntityFrameworkCore;
@@ -35,7 +36,7 @@ namespace SeamlessLaunchpad.Models
                 var connectionString = new StreamReader(File.OpenRead("secret.txt"));
                 optionsBuilder.UseSqlServer(connectionString.ReadToEnd());
                 connectionString.Close();
-                
+
             }
         }
 
@@ -185,3 +186,5 @@ namespace SeamlessLaunchpad.Models
         partial void OnModelCreatingPartial(ModelBuilder modelBuilder);
     }
 }
+
+
