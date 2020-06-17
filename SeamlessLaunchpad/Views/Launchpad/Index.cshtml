@@ -1,11 +1,21 @@
-﻿@model List<StartupContainer>
+﻿@*@model List<StartupContainer>*@
+@model AspNetUsers
+
+
+ 
+
+<h3>Welcome @Model.UserName from @Model.Association</h3>
 
 <a href ="\Launchpad\AddStartup">Add a Startup</a>
 
 <a href ="\Launchpad\ViewDashboard">View Dashboard</a>
 
 
-@foreach  (StartupContainer startup in Model)
+
+
+@*@foreach  (StartupContainer startup in Model)
 {
     @startup.Fields.CompanyName
-}
+}*@
+
+

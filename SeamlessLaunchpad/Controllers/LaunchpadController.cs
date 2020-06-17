@@ -5,7 +5,9 @@ using System.IO;
 using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Diagnostics;
 using SeamlessLaunchpad.Models;
 using SeamlessLaunchpad.ViewModel;
 
@@ -29,10 +31,16 @@ namespace SeamlessLaunchpad.Controllers
         }
 
         // Gets first value in sequence or returns null
-        public async Task<IActionResult> Index()
+        [Authorize]
+        public IActionResult Index()
         {
-            StartupListRootObject returnValue = (await Utilities.GetApiResponse<StartupListRootObject>("v0/appFo187B73tuYhyg", "Master List", "https://api.airtable.com", "api_key", ApiKey)).FirstOrDefault();
-            return View(returnValue.Records);
+            //old cold pulling form airtable
+            //StartupListRootObject returnValue = (await Utilities.GetApiResponse<StartupListRootObject>("v0/appFo187B73tuYhyg", "Master List", "https://api.airtable.com", "api_key", ApiKey)).FirstOrDefault();
+            //return View(returnValue.Records);
+            string id = User.FindFirst(ClaimTypes.NameIdentifier).Value;
+            var thisUser = _context.AspNetUsers.FirstOrDefault(x => x.Id == id);
+            return View (thisUser);
+
         }
 
 
@@ -69,6 +77,7 @@ namespace SeamlessLaunchpad.Controllers
             return RedirectToAction("Index");
         }
         
+        [Authorize]
         public IActionResult ViewDashboard()
         {
             //Grabbing the User's seamless Association 
@@ -76,7 +85,7 @@ namespace SeamlessLaunchpad.Controllers
             var thisUser = _context.AspNetUsers.FirstOrDefault(x => x.Id == id);
 
             //Sending list of startups and the favorites from DB and the user's association into the View
-            var startups = _context.Startup.ToList();
+            var startups = _context.Startup.Where(x => x.Status == null).ToList();
             ViewStartupFavorite view = new ViewStartupFavorite() {
                 StartupsToReview = startups,
                 FavoriteStartups = _context.Favorites.Where(x => x.UserId == id).ToList<Favorites>(),
@@ -84,7 +93,7 @@ namespace SeamlessLaunchpad.Controllers
             };
             return View(view);
         }
-
+        [Authorize]
         public IActionResult AddFavorite(int id)
         {
             Favorites newFavorite = new Favorites();
@@ -95,7 +104,7 @@ namespace SeamlessLaunchpad.Controllers
             {
                 _context.Favorites.Add(newFavorite);
                 _context.SaveChanges();
-                return RedirectToAction("ViewDashboard");
+                return RedirectToAction("ViewSingle", new { id = id });
             }
             else
             {
@@ -103,6 +112,24 @@ namespace SeamlessLaunchpad.Controllers
             }
         }
 
+        [Authorize]
+        public IActionResult RemoveFavorite(int id)
+        {
+            string userId = User.FindFirst(ClaimTypes.NameIdentifier).Value;
+            var thisUser = _context.AspNetUsers.FirstOrDefault(x => x.Id == userId);
+
+            var favoriteToRemove = _context.Favorites.Where(x => x.StartupId == id &&
+                                                            x.UserId == userId).ToList();
+            foreach (var f in favoriteToRemove)
+            {
+                _context.Favorites.Remove(f);
+            }
+            _context.SaveChanges();
+
+            return RedirectToAction("ViewSingle", new { id = id });
+        }
+
+        [Authorize]
         public IActionResult AddInterest(int id)
         {
             var startupToEdit = _context.Startup.Find(id);
@@ -110,21 +137,118 @@ namespace SeamlessLaunchpad.Controllers
             string userId = User.FindFirst(ClaimTypes.NameIdentifier).Value;
             var thisUser = _context.AspNetUsers.FirstOrDefault(x => x.Id == userId);
 
-            startupToEdit.InterestedPartners += thisUser.Association;
+            if(startupToEdit.InterestedPartners == "" || startupToEdit.InterestedPartners == null)
+            {                
+                startupToEdit.InterestedPartners += thisUser.Association;
+            }
+            else
+            {
+                startupToEdit.InterestedPartners += ", " + thisUser.Association;
+            }
 
             _context.Entry(startupToEdit).State = Microsoft.EntityFrameworkCore.EntityState.Modified;
             _context.Update(startupToEdit);
             _context.SaveChanges();
 
-            return RedirectToAction("ViewDashboard");
+            return RedirectToAction("ViewSingle", new { id = id });
+        }
+
+        [Authorize]
+        public IActionResult RemoveInterest(int id)
+        {
+            var startupToEdit = _context.Startup.Find(id);
+
+            string userId = User.FindFirst(ClaimTypes.NameIdentifier).Value;
+            var thisUser = _context.AspNetUsers.FirstOrDefault(x => x.Id == userId);
+
+            string[] interestedPartnersArray = startupToEdit.InterestedPartners.Replace(" ", "").Split(',');
+            string updatedInterestedPartnersString = "";
+
+            foreach (string p in interestedPartnersArray)
+            {
+                if(p != thisUser.Association)
+                {
+                    if (interestedPartnersArray.Length == 2)
+                    {
+                        updatedInterestedPartnersString = p;
+                    }
+                    else
+                    {
+                        updatedInterestedPartnersString += ", " + p;
+                    }
+                }
+            }
+
+            startupToEdit.InterestedPartners = updatedInterestedPartnersString;
+
+
+            _context.Entry(startupToEdit).State = Microsoft.EntityFrameworkCore.EntityState.Modified;
+            _context.Update(startupToEdit);
+            _context.SaveChanges();
+
+            return RedirectToAction("ViewSingle", new { id = id });
 
         }
 
+        [Authorize]
         public IActionResult ViewSingle(int id)
         {
-            var startupToView = _context.Startup.Find(id);
-            return View(startupToView);
+            string userId = User.FindFirst(ClaimTypes.NameIdentifier).Value;
+            var thisUser = _context.AspNetUsers.FirstOrDefault(x => x.Id == userId);
+            //INSERT call to Mike's code here, MAYBE, that COULD return similar startups from the API and write them to a list of our Startup model 
+            //OR we could add a list of API startup model to the viewmodel class, filter by what Mike's code returns, and pass that on...
+            //INSERT call to Jess's code here, that will return an int for successViewStartupFavorite view = new ViewStartupFavorite() {
+            ViewStartupFavorite view = new ViewStartupFavorite()
+            {
+                SingleStartupToView = _context.Startup.Find(id),
+                FavoriteStartups = _context.Favorites.Where(x => x.UserId == userId).ToList<Favorites>(),
+                UserAssociation = thisUser.Association
+            };
+
+            return View(view);
         }
 
+        [Authorize]
+        [HttpGet]
+        public IActionResult RemoveStartup(int id)
+        {
+            var startupToRemove = _context.Startup.Find(id);
+            return View(startupToRemove);
+        }
+        [HttpPost]
+        public IActionResult RemoveStartup(int id, string status)
+        {
+            var startupToRemove = _context.Startup.Find(id);
+
+            startupToRemove.Status = status;
+            startupToRemove.DateRemoved = DateTime.Now;
+
+            _context.Entry(startupToRemove).State = Microsoft.EntityFrameworkCore.EntityState.Modified;
+            _context.Update(startupToRemove);
+            _context.SaveChanges();
+
+            return RedirectToAction("ViewDashboard");
+        }
+
+        [Authorize]
+        [HttpGet]
+        public IActionResult EditComments(int id)
+        {
+            var startupToEdit = _context.Startup.Find(id);
+            return View(startupToEdit);
+        }
+        [HttpPost]
+        public IActionResult EditComments(int id, string comments)
+        {
+            var startupToEdit = _context.Startup.Find(id);
+
+            startupToEdit.Comments = comments;
+
+            _context.Entry(startupToEdit).State = Microsoft.EntityFrameworkCore.EntityState.Modified;
+            _context.Update(startupToEdit);
+            _context.SaveChanges();
+
+            return RedirectToAction("ViewSingle", new { id = id });
+        }
     }
 }

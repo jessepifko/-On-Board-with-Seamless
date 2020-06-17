@@ -1,0 +1,22 @@
+﻿
+@{
+    ViewData["Title"] = "RemoveStartup";
+}
+
+@model SeamlessLaunchpad.Models.Startup
+<h1>Remove Startup</h1>
+
+<p>Are you sure you want to remove this startup: @Model.Name from the the Seamless Launchpad? Doing so removes this startup from view for ALL Seamless members!</p>
+<a href="/Launchpad/ViewSingle?id=@Model.Id">Return to Viewing @Model.Name</a>
+
+<div>
+    <form action="/Launchpad/RemoveStartup" method="post">
+        <input type="hidden" name="id" value="@Model.Id" />
+        <select name="status">
+            <option value="Onboarded">Seamless is moving forward with Onboarding this Startup</option>
+            <option value="Pass">Seamless is no longer interested</option>
+        </select>
+        <input type="submit"  value="Remove" />
+    </form>
+</div>
+

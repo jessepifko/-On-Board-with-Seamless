@@ -1,0 +1,13 @@
+﻿
+@{
+    ViewData["Title"] = "EditComments";
+}
+@model SeamlessLaunchpad.Models.Startup
+<h1>Edit Comments</h1>
+<p></p>
+<form action="/Launchpad/EditComments" method="post">
+    <input type="hidden" name="id" value="@Model.Id" />
+    <input type="text" name="comments" placeholder="@Model.Comments" />
+    <input type="submit"  value="Submit comments" />
+</form>
+<a href="/Launchpad/ViewSingle?id=@Model.Id">Return to Viewing @Model.Name without editing comments</a>
