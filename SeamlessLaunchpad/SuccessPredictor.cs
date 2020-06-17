@@ -12,12 +12,9 @@ namespace SeamlessLaunchpad
         {
                 int totalfeedback = 0;
                 int teamMeasurement = 0;
-          
-            
-
+   
             foreach (FeedbackContainer fbc1 in f1)
             {
-               
                 totalfeedback += fbc1.Fields.TeamStrength;
             }
 
