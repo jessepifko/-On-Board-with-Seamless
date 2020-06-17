@@ -1,7 +1,10 @@
-﻿using Microsoft.EntityFrameworkCore.Storage.ValueConversion.Internal;
+﻿using Microsoft.AspNetCore.Hosting;
+using Microsoft.EntityFrameworkCore.Storage.ValueConversion.Internal;
+using SeamlessLaunchpad.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net.NetworkInformation;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 
@@ -32,12 +35,47 @@ namespace SeamlessLaunchpad
 
             string shortWordRegex = @"\b[a-z]{0,3}\b";
             string singleLetterRegex = @"\b[A-Z]\b";
-            string descTrimmed = Regex.Replace(desc, shortWordRegex, "");
+            string descTrimmed = Regex.Replace(desc.Replace(",", ""), shortWordRegex, "");
             string finalTrim  = Regex.Replace(descTrimmed, singleLetterRegex, "").Replace(".", "").Replace("  ", " ").Trim();
 
             ret = finalTrim.Split(' ').ToList();
 
             return ret;
+        }
+
+        public static Dictionary<ApiStartup, double> FindSimilar(string desc, List<string> themes, List<string> techAreas, StartupListRootObject startupList)
+        {
+            List<string> keywords = GetKeywords(desc);
+            List <StartupContainer> containers = startupList.Records;
+            Dictionary<ApiStartup, double> scoreDictionary = new Dictionary<ApiStartup, double>();
+            foreach (StartupContainer sc in containers)
+            {
+                ApiStartup startup = sc.Fields;
+                double score = 0;
+                foreach (string s in GetKeywords(startup.CompanySummary))
+                {
+                    if (keywords.Contains(s))
+                    {
+                        score += 1.5d;
+                    }
+                }
+                foreach (string s in themes)
+                {
+                    if (startup.Theme.Contains(s))
+                    {
+                        score++;
+                    }
+                }
+                foreach (string s in techAreas)
+                {
+                    if (startup.TechAreas.Contains(s))
+                    {
+                        score++;
+                    }
+                }
+                scoreDictionary.Add(startup, score);
+            }
+            return scoreDictionary;
         }
 
         public static string GetAlignment(List<string> themes, List<string> techAreas)
