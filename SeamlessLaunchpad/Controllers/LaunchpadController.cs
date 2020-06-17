@@ -4,12 +4,15 @@ using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Security.Claims;
+using System.Security.Cryptography.X509Certificates;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Diagnostics;
 using SeamlessLaunchpad.Models;
 using SeamlessLaunchpad.ViewModel;
+using Startup = SeamlessLaunchpad.Models.Startup;
+
 
 namespace SeamlessLaunchpad.Controllers
 {
@@ -78,20 +81,62 @@ namespace SeamlessLaunchpad.Controllers
         }
         
         [Authorize]
-        public IActionResult ViewDashboard()
+        public IActionResult ViewDashboard(string favOnly)
         {
             //Grabbing the User's seamless Association 
             string id = User.FindFirst(ClaimTypes.NameIdentifier).Value;
             var thisUser = _context.AspNetUsers.FirstOrDefault(x => x.Id == id);
+            List<Favorites> favoriteStartups = _context.Favorites.Where(x => x.UserId == id).ToList<Favorites>();
+            var startups = _context.Startup.Where(x => x.Status == null).ToList();
+
+            //Making a list of "popularity" against startup ID
+            Dictionary<int, int> startupFavoriteCount = new Dictionary<int, int>();
+            List<Favorites> allFavorites = _context.Favorites.ToList<Favorites>();
+            foreach (var s in startups)
+            {
+                int favCount = allFavorites.Where(x => x.StartupId == s.Id).Count();
+                startupFavoriteCount.Add(s.Id, favCount);
+            }
+
+            List<KeyValuePair<int, int>> orderedStartupFavoriteCount = startupFavoriteCount.ToList().OrderBy(x => x.Value).Reverse().ToList();
+            
+            
 
             //Sending list of startups and the favorites from DB and the user's association into the View
-            var startups = _context.Startup.Where(x => x.Status == null).ToList();
-            ViewStartupFavorite view = new ViewStartupFavorite() {
-                StartupsToReview = startups,
-                FavoriteStartups = _context.Favorites.Where(x => x.UserId == id).ToList<Favorites>(),
-                UserAssociation = thisUser.Association
-            };
-            return View(view);
+            if (favOnly != null)
+            {
+                List<Models.Startup> onlyFavorites = new List<Models.Startup>();
+                foreach (var s in startups)
+                {
+                    foreach (var f in favoriteStartups)
+                    {
+                        if (s.Id == f.StartupId)
+                        {
+                            onlyFavorites.Add(s);
+                        }
+                    }
+                }
+
+                FavoritesViewModel view = new FavoritesViewModel()
+                {
+                    StartupsToReview = onlyFavorites,
+                    FavoriteStartups = favoriteStartups,
+                    UserAssociation = thisUser.Association,
+                    FavoriteCount = orderedStartupFavoriteCount
+                };
+                return View(view);
+            }
+            else
+            {
+                FavoritesViewModel view = new FavoritesViewModel() {
+                    StartupsToReview = startups,
+                    FavoriteStartups = favoriteStartups,
+                    UserAssociation = thisUser.Association,
+                    FavoriteCount = orderedStartupFavoriteCount
+                };
+                return View(view);
+            }
+            
         }
         [Authorize]
         public IActionResult AddFavorite(int id)
@@ -157,7 +202,7 @@ namespace SeamlessLaunchpad.Controllers
         public IActionResult RemoveInterest(int id)
         {
             var startupToEdit = _context.Startup.Find(id);
-
+           
             string userId = User.FindFirst(ClaimTypes.NameIdentifier).Value;
             var thisUser = _context.AspNetUsers.FirstOrDefault(x => x.Id == userId);
 
@@ -168,7 +213,7 @@ namespace SeamlessLaunchpad.Controllers
             {
                 if(p != thisUser.Association)
                 {
-                    if (interestedPartnersArray.Length == 2)
+                    if (updatedInterestedPartnersString == "")
                     {
                         updatedInterestedPartnersString = p;
                     }
@@ -198,7 +243,7 @@ namespace SeamlessLaunchpad.Controllers
             //INSERT call to Mike's code here, MAYBE, that COULD return similar startups from the API and write them to a list of our Startup model 
             //OR we could add a list of API startup model to the viewmodel class, filter by what Mike's code returns, and pass that on...
             //INSERT call to Jess's code here, that will return an int for successViewStartupFavorite view = new ViewStartupFavorite() {
-            ViewStartupFavorite view = new ViewStartupFavorite()
+            FavoritesViewModel view = new FavoritesViewModel()
             {
                 SingleStartupToView = _context.Startup.Find(id),
                 FavoriteStartups = _context.Favorites.Where(x => x.UserId == userId).ToList<Favorites>(),
@@ -250,5 +295,7 @@ namespace SeamlessLaunchpad.Controllers
 
             return RedirectToAction("ViewSingle", new { id = id });
         }
+
+        
     }
 }
