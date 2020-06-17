@@ -8,9 +8,7 @@ namespace SeamlessLaunchpad
 {
     public class SuccessPredictor
     {
-
         public static int MeasureTeam(ApiStartup p1, List<FeedbackContainer> f1)
-
         {
                 int totalfeedback = 0;
                 int teamMeasurement = 0;

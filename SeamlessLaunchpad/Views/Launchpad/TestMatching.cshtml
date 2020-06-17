@@ -1,0 +1,24 @@
+﻿@model List<StartupContainer>
+
+@foreach(StartupContainer sc in Model)
+{
+    ApiStartup startup = sc.Fields;
+    string themes = "";
+    string techAreas = "";
+    if (startup.Theme != null)
+    {
+        themes = startup.Theme.Replace(", ", ",").Trim(' ', ',');
+    }
+    if (startup.TechAreas != null)
+    {
+        techAreas = startup.TechAreas.Replace(", ", ",").Trim(' ', ',');
+    }
+    List<string> themesList = new List<string>();
+    List<string> techAreaList = new List<string>();
+    if (themes != "")
+    {
+        themesList = themes.Split(',').ToList();
+        techAreaList = techAreas.Split(',').ToList();
+    }
+    <div>@startup.CompanyName: @KeywordMatching.GetAlignment(themesList, techAreaList)</div>
+}
