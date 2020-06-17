@@ -3,9 +3,101 @@
     ViewData["Title"] = "ViewSingle";
 }
 
-@model SeamlessLaunchpad.Models.Startup
-<h1>ViewSingle</h1>
+@model SeamlessLaunchpad.ViewModel.ViewStartupFavorite
+<h1>Prospective Startup:</h1>
+@{ 
+    bool fav = false;
+    foreach(var f in Model.FavoriteStartups)
+    {
+        if(f.StartupId == Model.SingleStartupToView.Id)
+        {
+            fav = true;
+        }
+    }
+} 
 
-@Model.Name
+<div>
+    <table class="table">
+        <tr>
+            <td>Company Name:</td>
+            <td>@Model.SingleStartupToView.Name</td>
+            <td>Date Added:</td>
+            <td>@Model.SingleStartupToView.DateAdded</td>
+        </tr>
+        <tr>
+            <td>Theme:</td>
+            <td>@Model.SingleStartupToView.Theme</td>
+            <td>Tech Area:</td>
+            <td>@Model.SingleStartupToView.TechArea</td>
+        </tr>
+        <tr>
+            <td>City:</td>
+            <td>@Model.SingleStartupToView.City</td>
+            <td>Country:</td>
+            <td>@Model.SingleStartupToView.Country</td>
+        </tr>
 
-put cool things here
+    </table>
+    <table class="table">
+        <tr>
+            <td>Summary:</td>
+            <td>@Model.SingleStartupToView.Summary</td>
+        </tr>
+        <tr>
+            <td>Interested Partners:</td>
+            <td>
+                @Model.SingleStartupToView.InterestedPartners
+                @if (Model.SingleStartupToView.InterestedPartners != null && Model.SingleStartupToView.InterestedPartners.Contains(Model.UserAssociation))
+                {
+                    <a href="/Launchpad/RemoveInterest?id=@Model.SingleStartupToView.Id">Remove @Model.UserAssociation as Interested</a>
+                }
+                else
+                {
+                    <a href="/Launchpad/AddInterest?id=@Model.SingleStartupToView.Id">Add @Model.UserAssociation as Interested</a>
+                }
+            </td>
+   
+        </tr>
+        <tr>
+            <td>Watched as Favorite?</td>
+            <td>
+                @if (fav)
+                {
+                    <p>Yes. <a href="/Launchpad/RemoveFavorite?id=@Model.SingleStartupToView.Id">Click to remove</a></p>
+                }
+                else
+                {
+                    <a href="/Launchpad/AddFavorite?id=@Model.SingleStartupToView.Id">Click to watch as Favorite</a>
+                }
+            </td>
+        </tr>
+        <tr>
+            <td>Comments:</td>
+            <td>@Model.SingleStartupToView.Comments <a href="/Launchpad/EditComments?id=@Model.SingleStartupToView.Id">...Add / Edit Comments</a></td>
+        </tr>
+    </table>
+    <h3>Performance</h3>
+    <table class="table">
+        <tr>
+            <td>Success Performance Score</td>
+            <td>INSERT SCORE HERE</td>
+        </tr>
+    </table>
+    <h3>News and Trends</h3>
+    <h5>Company Name top 3 Search Results:</h5>
+    <table class="table">
+        <tr>
+            <td>Result 1</td>
+            <td>Result 2</td>
+            <td>Result 3</td>
+        </tr>
+    </table>
+    <p>Google Search Rank:</p>
+    <h3>Predicted Alignment Within Seamless:</h3>
+    <p>Mike's Magic Sauce Here</p>
+    <h3>Potential Overlap with Existing Startups:</h3>
+    <p>Mike's Other Magic Sauce Here</p>
+
+    <h3>Remove from Onboarding Dashboard</h3>
+    <a href ="/Launchpad/RemoveStartup/?id=@Model.SingleStartupToView.Id">Remove this startup from the Launchpad Dashboard</a>
+</div>
