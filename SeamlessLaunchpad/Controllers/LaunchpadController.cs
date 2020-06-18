@@ -82,7 +82,11 @@ namespace SeamlessLaunchpad.Controllers
         }
 
         [Authorize]
-        public IActionResult ViewDashboard(string favOnly)
+        [HttpGet]
+        public IActionResult ViewDashboard(string favOnly, string thegoodlife = "", string healthbeyondthehospital = "",
+            string robustfuture = "", string convenienceproductivity = "", string softwareai = "", string sensing = "",
+            string robotics = "", string products = "", string advancedmaterials = "", string businessprocess = "",
+            string city = "", string country = "")
         {
             //Grabbing the User's seamless Association 
             string id = User.FindFirst(ClaimTypes.NameIdentifier).Value;
@@ -90,21 +94,14 @@ namespace SeamlessLaunchpad.Controllers
             List<Favorites> favoriteStartups = _context.Favorites.Where(x => x.UserId == id).ToList<Favorites>();
             var startups = _context.Startup.Where(x => x.Status == null).ToList();
 
-            //Making a list of "popularity" against startup ID
-            Dictionary<int, int> startupFavoriteCount = new Dictionary<int, int>();
-            List<Favorites> allFavorites = _context.Favorites.ToList<Favorites>();
-            foreach (var s in startups)
+            List<UserView> views = _context.UserView.Where(x => x.UserId.Equals(thisUser.Id)).ToList();
+            ViewBag.UserViews = new List<int>();
+            foreach (UserView v in views)
             {
-                int favCount = allFavorites.Where(x => x.StartupId == s.Id).Count();
-                startupFavoriteCount.Add(s.Id, favCount);
+                ViewBag.UserViews.Add(v.Id);
             }
-
-            List<KeyValuePair<int, int>> orderedStartupFavoriteCount = startupFavoriteCount.ToList().OrderBy(x => x.Value).Reverse().ToList();
-            
-            
-
             //Sending list of startups and the favorites from DB and the user's association into the View
-            if (favOnly != null)
+            if (favOnly == "yes")
             {
                 List<Models.Startup> onlyFavorites = new List<Models.Startup>();
                 foreach (var s in startups)
@@ -117,6 +114,16 @@ namespace SeamlessLaunchpad.Controllers
                         }
                     }
                 }
+                //Making a list of "popularity" against startup ID
+                Dictionary<int, int> startupFavoriteCount = new Dictionary<int, int>();
+                List<Favorites> allFavorites = _context.Favorites.ToList<Favorites>();
+                foreach (var s in startups)
+                {
+                    int favCount = allFavorites.Where(x => x.StartupId == s.Id).Count();
+                    startupFavoriteCount.Add(s.Id, favCount);
+                }
+
+                List<KeyValuePair<int, int>> orderedStartupFavoriteCount = startupFavoriteCount.ToList().OrderBy(x => x.Value).Reverse().ToList();
 
                 FavoritesViewModel view = new FavoritesViewModel()
                 {
@@ -129,6 +136,77 @@ namespace SeamlessLaunchpad.Controllers
             }
             else
             {
+                if (!string.IsNullOrEmpty(thegoodlife))
+                {
+                    startups = startups.Where(x => x.Theme.Contains("The Good Life")).ToList();
+                    ViewBag.TheGoodLife = true;
+                }
+                if (!string.IsNullOrEmpty(healthbeyondthehospital))
+                {
+                    startups = startups.Where(x => x.Theme.Contains("Health Beyond the Hospital")).ToList();
+                    ViewBag.HealthBeyondTheHospital = true;
+                }
+                if (!string.IsNullOrEmpty(robustfuture))
+                {
+                    startups = startups.Where(x => x.Theme.Contains("Robust Future")).ToList();
+                    ViewBag.RobustFuture = true;
+                }
+                if (!string.IsNullOrEmpty(convenienceproductivity))
+                {
+                    startups = startups.Where(x => x.Theme.Contains("Convenience")).ToList();
+                    ViewBag.ConvenienceProductivity = true;
+                }
+                if (!string.IsNullOrEmpty(softwareai))
+                {
+                    startups = startups.Where(x => x.TechArea.Contains("Software / AI")).ToList();
+                    ViewBag.SoftwareAI = true;
+                }
+                if (!string.IsNullOrEmpty(sensing))
+                {
+                    startups = startups.Where(x => x.TechArea.Contains("Sensing")).ToList();
+                    ViewBag.Sensing = true;
+                }
+                if (!string.IsNullOrEmpty(robotics))
+                {
+                    startups = startups.Where(x => x.TechArea.Contains("Robotics")).ToList();
+                    ViewBag.Robotics = true;
+                }
+                if (!string.IsNullOrEmpty(products))
+                {
+                    startups = startups.Where(x => x.TechArea.Contains("Products")).ToList();
+                    ViewBag.Products = true;
+                }
+                if (!string.IsNullOrEmpty(advancedmaterials))
+                {
+                    startups = startups.Where(x => x.TechArea.Contains("Advanced Materials")).ToList();
+                    ViewBag.AdvancedMaterials = true;
+                }
+                if (!string.IsNullOrEmpty(businessprocess))
+                {
+                    startups = startups.Where(x => x.TechArea.Contains("Business Process")).ToList();
+                    ViewBag.BusinessProcess = true;
+                }
+                if (!string.IsNullOrEmpty(city))
+                {
+                    startups = startups.Where(x => x.City != null && x.City.ToLower().Contains(city.ToLower())).ToList();
+                    ViewBag.City = city;
+                }
+                if (!string.IsNullOrEmpty(country))
+                {
+                    startups = startups.Where(x => x.Country != null && x.Country.ToLower().Contains(country.ToLower())).ToList();
+                    ViewBag.Country = country;
+                }
+                //Making a list of "popularity" against startup ID
+                Dictionary<int, int> startupFavoriteCount = new Dictionary<int, int>();
+                List<Favorites> allFavorites = _context.Favorites.ToList<Favorites>();
+                foreach (var s in startups)
+                {
+                    int favCount = allFavorites.Where(x => x.StartupId == s.Id).Count();
+                    startupFavoriteCount.Add(s.Id, favCount);
+                }
+
+                List<KeyValuePair<int, int>> orderedStartupFavoriteCount = startupFavoriteCount.ToList().OrderBy(x => x.Value).Reverse().ToList();
+
                 FavoritesViewModel view = new FavoritesViewModel() {
                     StartupsToReview = startups,
                     FavoriteStartups = favoriteStartups,
@@ -137,8 +215,110 @@ namespace SeamlessLaunchpad.Controllers
                 };
                 return View(view);
             }
-            
         }
+
+        [Authorize]
+        [HttpGet]
+        public async Task<IActionResult>GetSavedView(int selectedView)
+        {
+            string userId = User.FindFirst(ClaimTypes.NameIdentifier).Value;
+            UserView view = _context.UserView.FirstOrDefault(x => x.Id == selectedView && x.UserId.Equals(userId));
+            List<ViewFilter> filters = _context.ViewFilter.Where(y => y.ViewId == view.Id).ToList();
+            bool first = true;
+            string url = "/Launchpad/ViewDashboard";
+            foreach(ViewFilter f in filters)
+            {
+                if (first)
+                {
+                    url += $"?{f.FilterName}={Uri.EscapeDataString(f.FilterValue)}";
+                }
+                else
+                {
+                    url += $"&{f.FilterName}={Uri.EscapeDataString(f.FilterValue)}";
+                }
+                first = false;
+            }
+            return Redirect(url);
+        }
+
+        [Authorize]
+        [HttpGet]
+        public async Task<IActionResult> SaveView(string favOnly, string thegoodlife = "", string healthbeyondthehospital = "",
+            string robustfuture = "", string convenienceproductivity = "", string softwareai = "", string sensing = "",
+            string robotics = "", string products = "", string advancedmaterials = "", string businessprocess = "",
+            string city = "", string country = "")
+        {
+            string userId = User.FindFirst(ClaimTypes.NameIdentifier).Value;
+            UserView thisView = new UserView { UserId = userId };
+            _context.UserView.Add(thisView);
+            await _context.SaveChangesAsync();
+            if (!string.IsNullOrEmpty(thegoodlife))
+            {
+                ViewFilter filter = new ViewFilter { FilterName = "thegoodlife", FilterValue = "true", ViewId = thisView.Id };
+                _context.ViewFilter.Add(filter);
+            }
+            if (!string.IsNullOrEmpty(healthbeyondthehospital))
+            {
+                ViewFilter filter = new ViewFilter { FilterName = "healthbeyondthehospital", FilterValue = "true", ViewId = thisView.Id };
+                _context.ViewFilter.Add(filter);
+            }
+            if (!string.IsNullOrEmpty(robustfuture))
+            {
+                ViewFilter filter = new ViewFilter { FilterName = "robustfuture", FilterValue = "true", ViewId = thisView.Id };
+                _context.ViewFilter.Add(filter);
+            }
+            if (!string.IsNullOrEmpty(convenienceproductivity))
+            {
+                ViewFilter filter = new ViewFilter { FilterName = "convenienceproductivity", FilterValue = "true", ViewId = thisView.Id };
+                _context.ViewFilter.Add(filter);
+            }
+            if (!string.IsNullOrEmpty(softwareai))
+            {
+                ViewFilter filter = new ViewFilter { FilterName = "softwareai", FilterValue = "true", ViewId = thisView.Id };
+                _context.ViewFilter.Add(filter);
+            }
+            if (!string.IsNullOrEmpty(sensing))
+            {
+                ViewFilter filter = new ViewFilter { FilterName = "sensing", FilterValue = "true", ViewId = thisView.Id };
+                _context.ViewFilter.Add(filter);
+            }
+            if (!string.IsNullOrEmpty(robotics))
+            {
+                ViewFilter filter = new ViewFilter { FilterName = "robotics", FilterValue = "true", ViewId = thisView.Id };
+                _context.ViewFilter.Add(filter);
+            }
+            if (!string.IsNullOrEmpty(products))
+            {
+                ViewFilter filter = new ViewFilter { FilterName = "products", FilterValue = "true", ViewId = thisView.Id };
+                _context.ViewFilter.Add(filter);
+            }
+            if (!string.IsNullOrEmpty(advancedmaterials))
+            {
+                ViewFilter filter = new ViewFilter { FilterName = "advancedmaterials", FilterValue = "true", ViewId = thisView.Id };
+                _context.ViewFilter.Add(filter);
+            }
+            if (!string.IsNullOrEmpty(businessprocess))
+            {
+                ViewFilter filter = new ViewFilter { FilterName = "businessprocess", FilterValue = "true", ViewId = thisView.Id };
+                _context.ViewFilter.Add(filter);
+            }
+            if (!string.IsNullOrEmpty(city))
+            {
+                ViewFilter filter = new ViewFilter { FilterName = "city", FilterValue = city, ViewId = thisView.Id };
+                _context.ViewFilter.Add(filter);
+            }
+            if (!string.IsNullOrEmpty(country))
+            {
+                ViewFilter filter = new ViewFilter { FilterName = "country", FilterValue = country, ViewId = thisView.Id };
+                _context.ViewFilter.Add(filter);
+            }
+            await _context.SaveChangesAsync();
+            return Redirect($"/Launchpad/ViewDashboard?favOnly={favOnly}&thegoodlife={thegoodlife}&healthbeyondthehospital={healthbeyondthehospital}" +
+                $"&robustfuture={robustfuture}&convenienceproductivity={convenienceproductivity}&softwareai={softwareai}" +
+                $"&sensing={sensing}&robotics={robotics}&products={products}&advancedmaterials{advancedmaterials}&businessprocess={businessprocess}" +
+                $"&city={city}&country={country}");
+        }
+
         [Authorize]
         public IActionResult AddFavorite(int id)
         {
