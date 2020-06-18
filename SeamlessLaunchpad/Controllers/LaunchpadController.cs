@@ -531,8 +531,14 @@ namespace SeamlessLaunchpad.Controllers
             List<PredictedApiStartup> topResults = new List<PredictedApiStartup>();
             for(int i = 0; i < 3; i++) //change i<# to change number of results
             {
-               
-                topResults.Add(ratedFilteredApiStartups[i]);
+                try
+                {
+                    topResults.Add(ratedFilteredApiStartups[i]);
+                }
+                catch
+                {
+                    break;
+                }
             }
 
 
