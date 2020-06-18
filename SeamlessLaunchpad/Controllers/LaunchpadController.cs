@@ -9,6 +9,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Diagnostics;
+using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using SeamlessLaunchpad.Models;
 using SeamlessLaunchpad.ViewModel;
 using Startup = SeamlessLaunchpad.Models.Startup;
@@ -20,7 +21,7 @@ namespace SeamlessLaunchpad.Controllers
     {
         private readonly SLPADDBContext _context;
         private static readonly string ApiKey;
-        
+
         public LaunchpadController(SLPADDBContext context)
         {
             _context = context;
@@ -42,7 +43,7 @@ namespace SeamlessLaunchpad.Controllers
             //return View(returnValue.Records);
             string id = User.FindFirst(ClaimTypes.NameIdentifier).Value;
             var thisUser = _context.AspNetUsers.FirstOrDefault(x => x.Id == id);
-            return View (thisUser);
+            return View(thisUser);
 
         }
 
@@ -76,10 +77,10 @@ namespace SeamlessLaunchpad.Controllers
             {
                 _context.Startup.Add(newStartup);
                 _context.SaveChanges();
-            }    
+            }
             return RedirectToAction("Index");
         }
-        
+
         [Authorize]
         public IActionResult ViewDashboard(string favOnly)
         {
@@ -145,7 +146,7 @@ namespace SeamlessLaunchpad.Controllers
             newFavorite.UserId = User.FindFirst(ClaimTypes.NameIdentifier).Value;
             newFavorite.StartupId = id;
 
-            if(ModelState.IsValid)
+            if (ModelState.IsValid)
             {
                 _context.Favorites.Add(newFavorite);
                 _context.SaveChanges();
@@ -182,8 +183,8 @@ namespace SeamlessLaunchpad.Controllers
             string userId = User.FindFirst(ClaimTypes.NameIdentifier).Value;
             var thisUser = _context.AspNetUsers.FirstOrDefault(x => x.Id == userId);
 
-            if(startupToEdit.InterestedPartners == "" || startupToEdit.InterestedPartners == null)
-            {                
+            if (startupToEdit.InterestedPartners == "" || startupToEdit.InterestedPartners == null)
+            {
                 startupToEdit.InterestedPartners += thisUser.Association;
             }
             else
@@ -211,7 +212,7 @@ namespace SeamlessLaunchpad.Controllers
 
             foreach (string p in interestedPartnersArray)
             {
-                if(p != thisUser.Association)
+                if (p != thisUser.Association)
                 {
                     if (updatedInterestedPartnersString == "")
                     {
@@ -296,6 +297,31 @@ namespace SeamlessLaunchpad.Controllers
             return RedirectToAction("ViewSingle", new { id = id });
         }
 
-        
+
+        public async Task<IActionResult> CompareSuccess(int id)
+        {
+            List<string> techAreasStrings = new List<string>();
+            var startupToEdit = _context.Startup.Find(id);
+            // List<ApiStartup> newList = new List<ApiStartup>();
+            //var newList = startupToEdit;
+            
+          
+            
+
+            
+
+            StartupListRootObject startupList = (await Utilities.GetApiResponse<StartupListRootObject>("v0/appFo187B73tuYhyg", "Master List", "https://api.airtable.com", "api_key", ApiKey)).FirstOrDefault();
+            FeedbackListRootObject feedbackList = (await Utilities.GetApiResponse<FeedbackListRootObject>("v0/appFo187B73tuYhyg", "Feedback", "https://api.airtable.com", "api_key", ApiKey)).FirstOrDefault();
+
+                Dictionary<ApiStartup, int> kvp = new Dictionary<ApiStartup, int>();
+
+            foreach (StartupContainer l1 in startupList.Records)
+            {
+               kvp.Add(l1.Fields, SuccessPredictor.PredictSuccess(l1.Fields, feedbackList.Records.Where(x => x.Fields.Startup.Equals(l1.Fields.CompanyName)).ToList()));
+            }
+            return View(kvp);
+        }
+
+
     }
 }
