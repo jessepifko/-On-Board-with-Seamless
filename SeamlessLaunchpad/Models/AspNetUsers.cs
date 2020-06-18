@@ -12,6 +12,7 @@ namespace SeamlessLaunchpad.Models
             AspNetUserRoles = new HashSet<AspNetUserRoles>();
             AspNetUserTokens = new HashSet<AspNetUserTokens>();
             Favorites = new HashSet<Favorites>();
+            UserView = new HashSet<UserView>();
         }
 
         public string Id { get; set; }
@@ -36,5 +37,6 @@ namespace SeamlessLaunchpad.Models
         public virtual ICollection<AspNetUserRoles> AspNetUserRoles { get; set; }
         public virtual ICollection<AspNetUserTokens> AspNetUserTokens { get; set; }
         public virtual ICollection<Favorites> Favorites { get; set; }
+        public virtual ICollection<UserView> UserView { get; set; }
     }
 }

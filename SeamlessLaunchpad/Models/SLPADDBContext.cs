@@ -1,7 +1,5 @@
-﻿
-using System;
+﻿using System;
 using System.IO;
-using Microsoft.AspNetCore.SignalR.Protocol;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata;
 
@@ -27,16 +25,16 @@ namespace SeamlessLaunchpad.Models
         public virtual DbSet<AspNetUsers> AspNetUsers { get; set; }
         public virtual DbSet<Favorites> Favorites { get; set; }
         public virtual DbSet<Startup> Startup { get; set; }
+        public virtual DbSet<UserView> UserView { get; set; }
+        public virtual DbSet<ViewFilter> ViewFilter { get; set; }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
             if (!optionsBuilder.IsConfigured)
             {
-
                 var connectionString = new StreamReader(File.OpenRead("secret.txt"));
                 optionsBuilder.UseSqlServer(connectionString.ReadToEnd());
                 connectionString.Close();
-
             }
         }
 
@@ -131,6 +129,8 @@ namespace SeamlessLaunchpad.Models
                     .IsUnique()
                     .HasFilter("([NormalizedUserName] IS NOT NULL)");
 
+                entity.Property(e => e.Association).HasMaxLength(20);
+
                 entity.Property(e => e.Email).HasMaxLength(256);
 
                 entity.Property(e => e.NormalizedEmail).HasMaxLength(256);
@@ -180,11 +180,39 @@ namespace SeamlessLaunchpad.Models
                 entity.Property(e => e.Theme).HasMaxLength(120);
             });
 
+            modelBuilder.Entity<UserView>(entity =>
+            {
+                entity.Property(e => e.UserId)
+                    .IsRequired()
+                    .HasMaxLength(450);
+
+                entity.HasOne(d => d.User)
+                    .WithMany(p => p.UserView)
+                    .HasForeignKey(d => d.UserId)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("FK__UserView__UserId__6477ECF3");
+            });
+
+            modelBuilder.Entity<ViewFilter>(entity =>
+            {
+                entity.Property(e => e.FilterName)
+                    .IsRequired()
+                    .HasMaxLength(20);
+
+                entity.Property(e => e.FilterValue)
+                    .IsRequired()
+                    .HasMaxLength(50);
+
+                entity.HasOne(d => d.View)
+                    .WithMany(p => p.ViewFilter)
+                    .HasForeignKey(d => d.ViewId)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("FK__ViewFilte__ViewI__6754599E");
+            });
+
             OnModelCreatingPartial(modelBuilder);
         }
 
         partial void OnModelCreatingPartial(ModelBuilder modelBuilder);
     }
 }
-
-
