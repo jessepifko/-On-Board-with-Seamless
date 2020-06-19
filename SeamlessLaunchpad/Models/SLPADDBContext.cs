@@ -182,6 +182,8 @@ namespace SeamlessLaunchpad.Models
 
             modelBuilder.Entity<UserView>(entity =>
             {
+                entity.Property(e => e.Name).HasMaxLength(30);
+
                 entity.Property(e => e.UserId)
                     .IsRequired()
                     .HasMaxLength(450);
@@ -195,9 +197,7 @@ namespace SeamlessLaunchpad.Models
 
             modelBuilder.Entity<ViewFilter>(entity =>
             {
-                entity.Property(e => e.FilterName)
-                    .IsRequired()
-                    .HasMaxLength(20);
+                entity.Property(e => e.FilterName).HasMaxLength(50);
 
                 entity.Property(e => e.FilterValue)
                     .IsRequired()

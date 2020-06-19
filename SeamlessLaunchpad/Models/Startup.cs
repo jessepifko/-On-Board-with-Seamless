@@ -22,6 +22,8 @@ namespace SeamlessLaunchpad.Models
         public string InterestedPartners { get; set; }
         public DateTime? DateRemoved { get; set; }
         public string Status { get; set; }
+        public int? TeamScore { get; set; }
+        public int? UniqueScore { get; set; }
 
         public virtual ICollection<Favorites> Favorites { get; set; }
     }
