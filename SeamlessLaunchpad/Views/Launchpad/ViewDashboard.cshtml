@@ -5,22 +5,15 @@
 
 @model SeamlessLaunchpad.ViewModel.FavoritesViewModel
 
-@{
-
-}
 
 <h3>ViewDashboard</h3>
-<h4>Hot Prospects:</h4>
-@for (int i = 0; i < Math.Min(2, Model.FavoriteCount.Count); i++)
-{
-    int hotStartupId = Model.FavoriteCount[i].Key;
-    <p>@Model.FavoriteCount[i].Value other Seamless users are watching <a href="/Launchpad/ViewSingle/?id=@hotStartupId"> @Model.StartupsToReview[i].Name </a></p>
-}
 
 <h4>Current Prospects:</h4>
-<a href ="/Launchpad/ViewDashboard?favOnly=yes">View only your Favorites</a>
-<a href ="/Launchpad/ViewDashboard">View all</a><br/>
-Filter startups:<br/>
+<a href="/Launchpad/ViewDashboard?favOnly=yes">View only your Favorites</a>
+<a href="/Launchpad/ViewDashboard">View all</a>
+<br />
+Filter startups:
+<br />
 <form action="/Launchpad/ViewDashboard" method="get">
     <input type="hidden" name="favOnly" value="no" />
     <div name="themes">
@@ -48,21 +41,22 @@ Filter startups:<br/>
         <input type="checkbox" id="businessprocess" name="businessprocess" value="Business Process" @(ViewBag.BusinessProcess != null ? "checked" : "")>
         <label for="businessprocess">Business Process</label>
     </div>
-    <input type="text" name="City" placeholder="City" @(!string.IsNullOrEmpty(ViewBag.City) ? $"value={ViewBag.City}" : "") /><br/>
-    <input type="text" name="Country" placeholder="Country" @(!string.IsNullOrEmpty(ViewBag.Country) ? $"value={ViewBag.Country}" : "") /><br/>
-    <input type="submit" value="Filter" /><br/>
-    <input type="submit" formaction="/Launchpad/SaveView" value="Save this View" /><br/>
-</form><br/>
+    <input type="text" name="City" placeholder="City" @(!string.IsNullOrEmpty(ViewBag.City) ? $"value={ViewBag.City}" : "") /><br />
+    <input type="text" name="Country" placeholder="Country" @(!string.IsNullOrEmpty(ViewBag.Country) ? $"value={ViewBag.Country}" : "") /><br />
+    <input type="submit" value="Filter" /><br />
+    <input type="submit" formaction="/Launchpad/SaveView" value="Save this View" /><br />
+</form>
+<br />
 Select saved view:
 <form action="/Launchpad/GetSavedView" method="get">
     <select name="selectedView">
         <option value="">Choose...</option>
-        @foreach(int i in ViewBag.UserViews)
+        @foreach (int i in ViewBag.UserViews)
         {
             @Html.Raw($"<option value=\"{i}\">{i}</option>")
         }
-    </select><br/>
-    <input type="submit" value="Select View"/>
+    </select><br />
+    <input type="submit" value="Select View" />
 </form>
 <table class="table">
     <tr>
@@ -74,13 +68,14 @@ Select saved view:
         <th>Tech Area</th>
         <th>Date Added</th>
         <th>Declared Interest</th>
-        <th>Favorite</th>
+        <th>Favorited</th>
+        <th>Commented</th>
     </tr>
     @foreach (var s in Model.StartupsToReview)
     {
-        
+
         bool fav = false;
-         
+
         @foreach (var f in Model.FavoriteStartups)
         {
             if (f.StartupId == s.Id)
@@ -88,40 +83,53 @@ Select saved view:
                 fav = true;
             }
         }
-<tr>
-    <td><a href="/Launchpad/ViewSingle?id=@s.Id">@s.Name</a></td>
-    <td>@s.City</td>
-    <td>@s.Country</td>
-    <td>@s.Summary</td>
-    <td>@s.Theme</td>
-    <td>@s.TechArea</td>
-    <td>@s.DateAdded</td>
-    <td>@s.InterestedPartners</td>
-    @if (fav)
-    {
-        int favoriteCountExcludingYou = Model.FavoriteCount.FirstOrDefault(x => x.Key == s.Id).Value - 1;
-        if (favoriteCountExcludingYou == 0)
-        {
-            <td>You</td>
-        }
-        else
-        {
-            <td>@favoriteCountExcludingYou and You</td>
-        }
+        <tr>
+            <td><a href="/Launchpad/ViewSingle?id=@s.Id">@s.Name</a></td>
+            <td>@s.City</td>
+            <td>@s.Country</td>
+            <td>@s.Summary</td>
+            <td>@s.Theme</td>
+            <td>@s.TechArea</td>
+            <td>@s.DateAdded</td>
+            <td>@s.InterestedPartners</td>
+            @if (fav)
+            {
+                int favoriteCountExcludingYou = Model.FavoriteCount.FirstOrDefault(x => x.Key == s.Id).Value - 1;
+                if (favoriteCountExcludingYou == 0)
+                {
+                    <td>You</td>
+                }
+                else
+                {
+                    <td>@favoriteCountExcludingYou and You</td>
+                }
+
+            }
+            else
+            {
+                int favoriteCountExcludingYou = Model.FavoriteCount.FirstOrDefault(x => x.Key == s.Id).Value;
+                if (favoriteCountExcludingYou == 0)
+                {
+                    <td></td>
+                }
+                else
+                {
+                    <td>@Model.FavoriteCount.FirstOrDefault(x => x.Key == s.Id).Value</td>
+                }
+            }
+            @{
+                int commentCount = Model.CommentCount.FirstOrDefault(x => x.Key == s.Id).Value;
+                if (commentCount == 0)
+                {
+                    <td></td>
+                }
+                else
+                {
+                    <td>@commentCount</td>
+                }
+            }
+        </tr>
 
     }
-    else
-    {
-        int favoriteCountExcludingYou = Model.FavoriteCount.FirstOrDefault(x => x.Key == s.Id).Value;
-        if (favoriteCountExcludingYou == 0)
-        {
-            <td></td>
-        } else
-        {
-            <td>@Model.FavoriteCount.FirstOrDefault(x => x.Key == s.Id).Value</td>
-        }
-    }
-</tr>                                
-     }
 </table>
 

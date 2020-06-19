@@ -217,7 +217,33 @@ namespace SeamlessLaunchpad.Controllers
             string id = User.FindFirst(ClaimTypes.NameIdentifier).Value;
             var thisUser = _context.AspNetUsers.FirstOrDefault(x => x.Id == id);
             List<Favorites> favoriteStartups = _context.Favorites.Where(x => x.UserId == id).ToList<Favorites>();
-            var startups = _context.Startup.Where(x => x.Status == null).ToList();
+            List<Models.Startup> startups = new List<Models.Startup>();
+            if (favOnly == "yes")
+            {
+                var startupsToView = _context.Startup.Where(x => x.Status == null).ToList();
+                foreach (var s in startupsToView)
+                {
+                    foreach (var f in favoriteStartups)
+                    {
+                        if (s.Id == f.StartupId)
+                        {
+
+                            startups.Add(s);
+                        }
+                    }
+                }
+
+            }
+            else
+            {
+                var startupsToView = _context.Startup.Where(x => x.Status == null).ToList();
+                foreach (var s in startupsToView)
+                {
+                    startups.Add(s);
+                }
+            }
+
+
 
             List<UserView> views = _context.UserView.Where(x => x.UserId.Equals(thisUser.Id)).ToList();
             ViewBag.UserViews = new List<int>();
@@ -226,41 +252,12 @@ namespace SeamlessLaunchpad.Controllers
                 ViewBag.UserViews.Add(v.Id);
             }
             //Sending list of startups and the favorites from DB and the user's association into the View
-            if (favOnly == "yes")
-            {
-                List<Models.Startup> onlyFavorites = new List<Models.Startup>();
-                foreach (var s in startups)
-                {
-                    foreach (var f in favoriteStartups)
-                    {
-                        if (s.Id == f.StartupId)
-                        {
-                            onlyFavorites.Add(s);
-                        }
-                    }
-                }
-                //Making a list of "popularity" against startup ID
-                Dictionary<int, int> startupFavoriteCount = new Dictionary<int, int>();
-                List<Favorites> allFavorites = _context.Favorites.ToList<Favorites>();
-                foreach (var s in startups)
-                {
-                    int favCount = allFavorites.Where(x => x.StartupId == s.Id).Count();
-                    startupFavoriteCount.Add(s.Id, favCount);
-                }
+            //if (favOnly == "yes")
+            //{
 
-                List<KeyValuePair<int, int>> orderedStartupFavoriteCount = startupFavoriteCount.ToList().OrderBy(x => x.Value).Reverse().ToList();
-
-                FavoritesViewModel view = new FavoritesViewModel()
-                {
-                    StartupsToReview = onlyFavorites,
-                    FavoriteStartups = favoriteStartups,
-                    UserAssociation = thisUser.Association,
-                    FavoriteCount = orderedStartupFavoriteCount
-                };
-                return View(view);
-            }
-            else
-            {
+            //}
+            //else
+            //{
                 if (!string.IsNullOrEmpty(thegoodlife))
                 {
                     startups = startups.Where(x => x.Theme.Contains("The Good Life")).ToList();
@@ -321,25 +318,39 @@ namespace SeamlessLaunchpad.Controllers
                     startups = startups.Where(x => x.Country != null && x.Country.ToLower().Contains(country.ToLower())).ToList();
                     ViewBag.Country = country;
                 }
+      
+            //}
+                //Making a list of "popularity" against startup ID
                 //Making a list of "popularity" against startup ID
                 Dictionary<int, int> startupFavoriteCount = new Dictionary<int, int>();
                 List<Favorites> allFavorites = _context.Favorites.ToList<Favorites>();
+                Dictionary<int, int> startupCommentCount = new Dictionary<int, int>();
+                List<Comment> Comments = _context.Comment.ToList<Comment>();
+                Dictionary<int, int> successPredictorScore = new Dictionary<int, int>();
+                //FeedbackListRootObject feedbackList = (await Utilities.GetApiResponse<FeedbackListRootObject>("v0/appFo187B73tuYhyg", "Feedback", "https://api.airtable.com", "api_key", ApiKey)).FirstOrDefault();
                 foreach (var s in startups)
                 {
                     int favCount = allFavorites.Where(x => x.StartupId == s.Id).Count();
                     startupFavoriteCount.Add(s.Id, favCount);
+                    int comCount = Comments.Where(x => x.StartupId == s.Id &&
+                                                    x.Restricted == false).Count();
+                    startupCommentCount.Add(s.Id, comCount);
+                    //int success = SuccessPredictor.PredictSuccess(, feedbackList.Records);
+
                 }
-
+                
                 List<KeyValuePair<int, int>> orderedStartupFavoriteCount = startupFavoriteCount.ToList().OrderBy(x => x.Value).Reverse().ToList();
-
-                FavoritesViewModel view = new FavoritesViewModel() {
+                List<KeyValuePair<int, int>> orderedStartupCommentCount = startupCommentCount.ToList().OrderBy(x => x.Value).Reverse().ToList();
+            
+                FavoritesViewModel view = new FavoritesViewModel()
+                {
                     StartupsToReview = startups,
                     FavoriteStartups = favoriteStartups,
                     UserAssociation = thisUser.Association,
-                    FavoriteCount = orderedStartupFavoriteCount
+                    FavoriteCount = orderedStartupFavoriteCount,
+                    CommentCount = orderedStartupCommentCount
                 };
                 return View(view);
-            }
         }
 
         [Authorize]
@@ -558,7 +569,12 @@ namespace SeamlessLaunchpad.Controllers
                 SingleStartupToView = _context.Startup.Find(id),
                 FavoriteStartups = _context.Favorites.Where(x => x.UserId == userId).ToList<Favorites>(),
                 UserAssociation = thisUser.Association,
-                MatchingPredictedStartups = topMatching
+                MatchingPredictedStartups = topMatching,
+                Comments = _context.Comment.Where(x => x.StartupId == id &&
+                                                    x.Restricted == false).ToList<Comment>(),
+                ExclusiveComments = _context.Comment.Where(x => x.StartupId == id &&
+                                                           x.Restricted == true &&
+                                                           x.Association == thisUser.Association).ToList<Comment>()
             };
 
             return View(view);
@@ -586,39 +602,71 @@ namespace SeamlessLaunchpad.Controllers
             return RedirectToAction("ViewDashboard");
         }
 
-        //[Authorize]
-        //[HttpGet]
-        //public IActionResult EditComments(int id)
-        //{
-        //    var startupToEdit = _context.Startup.Find(id);
-        //    return View(startupToEdit);
-        //}
-        //[HttpPost]
-        //public IActionResult EditComments(int id, string comments)
-        //{
-        //    var startupToEdit = _context.Startup.Find(id);
-
-        //    startupToEdit.Comments = comments;
-
-        //    _context.Entry(startupToEdit).State = Microsoft.EntityFrameworkCore.EntityState.Modified;
-        //    _context.Update(startupToEdit);
-        //    _context.SaveChanges();
-
-        //    return RedirectToAction("ViewSingle", new { id = id });
-        //}
-
         [Authorize]
         [HttpGet]
         public IActionResult AddComment(int id)
         {
-            List<Comment> comments = _context.Comment.Where(x => x.StartupId == id).ToList<Comment>();
+            List<Comment> comments = _context.Comment.Where(x => x.StartupId == id && 
+                                                            x.Restricted == false).ToList<Comment>();
             ViewBag.StartupId = id;
             return View(comments);
         }
          [HttpPost]
         public IActionResult AddComment(int id, string comment)
         {
-            return View();
+            string userId = User.FindFirst(ClaimTypes.NameIdentifier).Value;
+            var thisUser = _context.AspNetUsers.FirstOrDefault(x => x.Id == userId);
+            
+            Comment commentToAdd = new Comment();
+            commentToAdd.StartupId = id;
+            commentToAdd.UserName = thisUser.UserName;
+            commentToAdd.Association = thisUser.Association;
+            commentToAdd.CommentDate = DateTime.Now;
+            commentToAdd.Comment1 = comment;
+            commentToAdd.Restricted = false;
+
+            if (ModelState.IsValid)
+            {
+                _context.Comment.Add(commentToAdd);
+                _context.SaveChanges();
+            }
+            return RedirectToAction("ViewSingle", new { id = id });
+        }
+
+        [Authorize]
+        [HttpGet]
+        public IActionResult AddExclusiveComment(int id)
+        {
+            string userId = User.FindFirst(ClaimTypes.NameIdentifier).Value;
+            var thisUser = _context.AspNetUsers.FirstOrDefault(x => x.Id == userId);
+
+            List<Comment> comments = _context.Comment.Where(x => x.StartupId == id &&
+                                                            x.Association == thisUser.Association &&
+                                                            x.Restricted == true).ToList<Comment>();
+            ViewBag.StartupId = id;
+            ViewBag.UserAssoc = thisUser.Association;
+            return View(comments);
+        }
+        [HttpPost]
+        public IActionResult AddExclusiveComment(int id, string comment)
+        {
+            string userId = User.FindFirst(ClaimTypes.NameIdentifier).Value;
+            var thisUser = _context.AspNetUsers.FirstOrDefault(x => x.Id == userId);
+
+            Comment commentToAdd = new Comment();
+            commentToAdd.StartupId = id;
+            commentToAdd.UserName = thisUser.UserName;
+            commentToAdd.Association = thisUser.Association;
+            commentToAdd.CommentDate = DateTime.Now;
+            commentToAdd.Comment1 = comment;
+            commentToAdd.Restricted = true;
+
+            if (ModelState.IsValid)
+            {
+                _context.Comment.Add(commentToAdd);
+                _context.SaveChanges();
+            }
+            return RedirectToAction("ViewSingle", new { id = id });
         }
 
 

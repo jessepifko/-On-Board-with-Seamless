@@ -18,7 +18,16 @@ namespace SeamlessLaunchpad.ViewModel
 
         public List<KeyValuePair<int, int>> FavoriteCount { get; set; }
 
+        public List<KeyValuePair<int, int>> CommentCount { get; set; }
+
+
         public List<PredictedApiStartup> MatchingPredictedStartups { get; set; }
+
+        public List<Comment> ExclusiveComments { get; set; }
+
+        public List<Comment> Comments { get; set; }
+
+
 
     }
 }

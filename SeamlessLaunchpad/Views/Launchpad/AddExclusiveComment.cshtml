@@ -1,0 +1,33 @@
+﻿
+@{
+    ViewData["Title"] = "AddExclusiveComment";
+}
+
+@model List<Comment>
+
+<h1>Add a Comment</h1>
+<p>These comments are visible ONLY to @ViewBag.UserAssoc members!</p>
+@if (Model.Count != 0)
+{
+    <table>
+        <tr>
+            <th>User</th>
+            <th>Comment</th>
+            <th>Date</th>
+        </tr>
+        @foreach (Comment c in Model)
+        {
+            <tr>
+                <td>@c.UserName</td>
+                <td>@c.Comment1</td>
+                <td>@c.CommentDate</td>
+            </tr>
+        }
+    </table>
+}
+
+<form action="/Launchpad/AddExclusiveComment?id=@ViewBag.StartupId" method="post">
+    <input type="hidden" name="id" value="@ViewBag.StartupId" />
+    <input type="text" name="Comment" required="required" placeholder="Your comments here..." />
+    <input type="submit" value="Submit" />
+</form>
