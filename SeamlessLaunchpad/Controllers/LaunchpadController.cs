@@ -82,130 +82,119 @@ namespace SeamlessLaunchpad.Controllers
             startupToAdd.Summary = summary;
             startupToAdd.City = city;
             startupToAdd.Country = country;
-            string techAreas = "";
+            string themes = "";
 
             if (thegoodlife != "")
             {
-                techAreas += thegoodlife;
+                themes += thegoodlife;
             } 
             if (healthbeyondthehotpital != "")
             {
-                if(techAreas == "")
+                if(themes == "")
                 {
-                    techAreas += healthbeyondthehotpital;
+                    themes += healthbeyondthehotpital;
                 }
                 else
                 {
-                    techAreas += ", " + healthbeyondthehotpital;
+                    themes += ", " + healthbeyondthehotpital;
                 }
 
             }
             if (robustfuture != "")
             {
-                if (techAreas == "")
+                if (themes == "")
                 {
-                    techAreas += robustfuture;
+                    themes += robustfuture;
                 }
                 else
                 {
-                    techAreas += ", " + robustfuture;
+                    themes += ", " + robustfuture;
                 }
 
             }
             if (convenienceandproductivity != "")
-            {
-                if (techAreas == "")
-                {
-                    techAreas += convenienceandproductivity;
-                }
-                else
-                {
-                    techAreas += ", " + convenienceandproductivity;
-                }
-
-            }
-            if (convenienceandproductivity != "")
-            {
-                if (techAreas == "")
-                {
-                    techAreas += convenienceandproductivity;
-                }
-                else
-                {
-                    techAreas += ", " + convenienceandproductivity;
-                }
-
-            }
-            startupToAdd.TechArea = techAreas;
-
-            string themes = "";
-
-            if (softwareai != "")
-            {
-                themes += softwareai;
-            }
-            if (sensing != "")
             {
                 if (themes == "")
                 {
-                    themes += sensing;
+                    themes += convenienceandproductivity;
                 }
                 else
                 {
-                    themes += ", " + sensing;
+                    themes += ", " + convenienceandproductivity;
+                }
+
+            }
+           
+            startupToAdd.Theme = themes;
+
+            string techArea = "";
+
+            if (softwareai != "")
+            {
+                techArea += softwareai;
+            }
+            if (sensing != "")
+            {
+                if (techArea == "")
+                {
+                    techArea += sensing;
+                }
+                else
+                {
+                    techArea += ", " + sensing;
                 }
 
             }
             if (robotics != "")
             {
-                if (themes == "")
+                if (techArea == "")
                 {
-                    themes += robotics;
+                    techArea += robotics;
                 }
                 else
                 {
-                    themes += ", " + robotics;
+                    techArea += ", " + robotics;
                 }
 
             }
             if (products != "")
             {
-                if (themes == "")
+                if (techArea == "")
                 {
-                    themes += products;
+                    techArea += products;
                 }
                 else
                 {
-                    themes += ", " + products;
+                    techArea += ", " + products;
                 }
 
             }
             if (advancedmaterials != "")
             {
-                if (themes == "")
+                if (techArea == "")
                 {
-                    themes += advancedmaterials;
+                    techArea += advancedmaterials;
                 }
                 else
                 {
-                    themes += ", " + advancedmaterials;
+                    techArea += ", " + advancedmaterials;
                 }
 
             }
             if (businessprocess != "")
             {
-                if (themes == "")
+                if (techArea == "")
                 {
-                    themes += businessprocess;
+                    techArea += businessprocess;
                 }
                 else
                 {
-                    themes += ", " + businessprocess;
+                    techArea += ", " + businessprocess;
                 }
 
             }
 
-            startupToAdd.Theme = themes;
+            startupToAdd.TechArea = techArea;
 
             startupToAdd.DateAdded = DateTime.Parse(dateadded);
 
@@ -623,7 +612,7 @@ namespace SeamlessLaunchpad.Controllers
         public async Task<List<PredictedApiStartup>> CompareSuccess(int id)
         {
            //List<string> techAreasStrings = new List<string>();
-            var startupToEdit = _context.Startup.Find(id);
+            Models.Startup startupToEdit = _context.Startup.Find(id);
             // List<ApiStartup> newList = new List<ApiStartup>();
             //var newList = startupToEdit;
 
@@ -637,8 +626,9 @@ namespace SeamlessLaunchpad.Controllers
                 {
                     if (record.Fields.TechAreas != null)
                     {
-
-                        if (record.Fields.TechAreas.Contains(ta))
+                        string apiTechAreas = record.Fields.TechAreas.Replace(" ", "").ToLower();
+                        string thisTechArea = ta.Replace(" ", "").ToLower();
+                        if (apiTechAreas.Contains(thisTechArea))
                         {
                             filteredStartupList.Records.Add(record);
                         }
