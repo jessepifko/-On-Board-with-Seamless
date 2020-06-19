@@ -3,6 +3,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion.Internal;
 using SeamlessLaunchpad.Models;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Net.NetworkInformation;
 using System.Text.RegularExpressions;
@@ -15,6 +16,7 @@ namespace SeamlessLaunchpad
 
         public static Dictionary<string, List<string>> themeToAlignmentPairing;
         public static Dictionary<string, List<string>> techAreaToAlignmentPairing;
+        private static readonly string keywordApiKey;
 
         static KeywordMatching()
         {
@@ -27,6 +29,9 @@ namespace SeamlessLaunchpad
             techAreaToAlignmentPairing.Add("Sensing", new List<string> { "Whirlpool", "Faurecia", "Emergent" });
             techAreaToAlignmentPairing.Add("Software / AI", new List<string> { "Whirlpool", "Amway", "Emergent", "Trinity" });
             techAreaToAlignmentPairing.Add("Robotics", new List<string> { "Bissel", "Emergent", "Trinity" });
+            StreamReader sr = new StreamReader(File.OpenRead("keywordapi.txt"));
+            keywordApiKey = sr.ReadToEnd().Trim(' ', '\r', '\n');
+            sr.Close();
         }
 
         public static List<string> GetKeywords(string desc)
@@ -144,6 +149,20 @@ namespace SeamlessLaunchpad
                 return "";
             }
             return string.Join(",", alignedCompanies);
+        }
+
+        public async void SetupKeywords(List<StartupContainer> startups)
+        {
+            foreach (StartupContainer s in startups)
+            {
+                List<Keyword> keywords = (await Utilities.GetApiResponse<KeywordApiResponse>("v4", "keywords", "https://apis.paralleldots.com", "api_key", keywordApiKey, "text", Uri.EscapeDataString(s.Fields.CompanySummary))).FirstOrDefault().Keywords;
+                break;
+            }
+        }
+        public async Task<List<Keyword>> GetKeywords(StartupContainer startup)
+        {
+            List<Keyword> keywords = (await Utilities.GetApiResponse<KeywordApiResponse>("v4", "keywords", "https://apis.paralleldots.com", "api_key", keywordApiKey, "text", Uri.EscapeDataString(startup.Fields.CompanySummary))).FirstOrDefault().Keywords;
+            return keywords;
         }
     }
 }
