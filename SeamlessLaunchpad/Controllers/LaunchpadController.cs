@@ -4,7 +4,6 @@ using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Security.Claims;
-using System.Security.Cryptography.X509Certificates;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -591,26 +590,42 @@ namespace SeamlessLaunchpad.Controllers
             return RedirectToAction("ViewDashboard");
         }
 
+        //[Authorize]
+        //[HttpGet]
+        //public IActionResult EditComments(int id)
+        //{
+        //    var startupToEdit = _context.Startup.Find(id);
+        //    return View(startupToEdit);
+        //}
+        //[HttpPost]
+        //public IActionResult EditComments(int id, string comments)
+        //{
+        //    var startupToEdit = _context.Startup.Find(id);
+
+        //    startupToEdit.Comments = comments;
+
+        //    _context.Entry(startupToEdit).State = Microsoft.EntityFrameworkCore.EntityState.Modified;
+        //    _context.Update(startupToEdit);
+        //    _context.SaveChanges();
+
+        //    return RedirectToAction("ViewSingle", new { id = id });
+        //}
+
         [Authorize]
         [HttpGet]
-        public IActionResult EditComments(int id)
+        public IActionResult AddComment(int id)
         {
-            var startupToEdit = _context.Startup.Find(id);
-            return View(startupToEdit);
+            List<Comment> comments = _context.Comment.Where(x => x.StartupId == id).ToList<Comment>();
+            ViewBag.StartupId = id;
+            return View(comments);
         }
-        [HttpPost]
-        public IActionResult EditComments(int id, string comments)
+         [HttpPost]
+        public IActionResult AddComment(int id, string comment)
         {
-            var startupToEdit = _context.Startup.Find(id);
-
-            startupToEdit.Comments = comments;
-
-            _context.Entry(startupToEdit).State = Microsoft.EntityFrameworkCore.EntityState.Modified;
-            _context.Update(startupToEdit);
-            _context.SaveChanges();
-
-            return RedirectToAction("ViewSingle", new { id = id });
+            return View();
         }
+
+
 
 
         public async Task<List<PredictedApiStartup>> CompareSuccess(int id)

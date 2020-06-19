@@ -5,38 +5,42 @@
 
 <h1>Add Startup</h1>
 
-<form action="/Launchpad/AddStartup" method="get">
-    <input type="text" name="Name" required="required" placeholder="Name" />
-    <input type="text" name="Summary" required="required" placeholder="Two Line Startup Summary" />
-    <div name="themes">
-        <p>Select all the following themes that apply</p>
-        <input type="checkbox" id="thegoodlife" name="thegoodlife" value="The Good Life">
-        <label for="thegoodlife">The Good Life</label>
-        <input type="checkbox" id="healthbeyondthehotpital" name="healthbeyondthehotpital" value="Health Beyond the Hospital">
-        <label for="healthbeyondthehotpital">Health Beyond the Hospital</label>
-        <input type="checkbox" id="robustfuture" name="robustfuture" value="Robust Future">
-        <label for="robustfuture">Robust Future</label>
-        <input type="checkbox" id="convenienceandproductivity" name="convenienceandproductivity" value="Convenience & Productivity">
-        <label for="convenienceandproductivity">Convenience & Productivity</label>
-    </div>
-    <div name="techarea">
-        <p>Select all from the following tech areas that apply</p>
-        <input type="checkbox" id="softwareai" name="softwareai" value="Software / AI">
-        <label for="softwareai">Software / AI</label>
-        <input type="checkbox" id="sensing" name="sensing" value="Sensing">
-        <label for="sensing">Sensing</label>
-        <input type="checkbox" id="robotics" name="robotics" value="Robotics">
-        <label for="robotics">Robotics</label>
-        <input type="checkbox" id="products" name="products" value="Products">
-        <label for="products">Products</label>
-        <input type="checkbox" id="advancedmaterials" name="advancedmaterials" value="Advanced Materials">
-        <label for="advancedmaterials">Advanced Materials</label>
-        <input type="checkbox" id="businessprocess" name="businessprocess" value="Business Process">
-        <label for="businessprocess">Business Process</label>
-    </div>
-    <input type="text" name="City" required="required" placeholder="City" />
-    <input type="text" name="Country" required="required" placeholder="Country" />
-    <input type="hidden" name="dateadded" value="@DateTime.Now.ToString("yyyy-MM-dd")" />
 
-    <input type="submit" value="Submit" />
+<form action="/Launchpad/AddStartup" method="get">
+    <p>Enter startup name, company summary, team score, and uniqueness </p>
+    <input type="text" name="Name" placeholder="Name" />
+    <input type="text" name="Summary" size="50" placeholder="Two Line Startup Summary" />
+    <input type="number" name="TeamScore" min=1 max=5 placeholder="Team Score (1-5)" />
+    <input type="number" name="Uniqueness" min=1 max=5 placeholder="Uniqueness (1-5)" />
+        <div name="themes">
+            <p>Select all the following themes that apply</p>
+            <input type="checkbox" id="thegoodlife" name="thegoodlife" value="The Good Life">
+            <label for="thegoodlife">The Good Life</label>
+            <input type="checkbox" id="healthbeyondthehotpital" name="healthbeyondthehotpital" value="Health Beyond the Hospital">
+            <label for="healthbeyondthehotpital">Health Beyond the Hospital</label>
+            <input type="checkbox" id="robustfuture" name="robustfuture" value="Robust Future">
+            <label for="robustfuture">Robust Future</label>
+            <input type="checkbox" id="convenienceandproductivity" name="convenienceandproductivity" value="Convenience & Productivity">
+            <label for="convenienceandproductivity">Convenience & Productivity</label>
+        </div>
+        <div name="techarea">
+            <p>Select all from the following tech areas that apply</p>
+            <input type="checkbox" id="softwareai" name="softwareai" value="Software / AI">
+            <label for="softwareai">Software / AI</label>
+            <input type="checkbox" id="sensing" name="sensing" value="Sensing">
+            <label for="sensing">Sensing</label>
+            <input type="checkbox" id="robotics" name="robotics" value="Robotics">
+            <label for="robotics">Robotics</label>
+            <input type="checkbox" id="products" name="products" value="Products">
+            <label for="products">Products</label>
+            <input type="checkbox" id="advancedmaterials" name="advancedmaterials" value="Advanced Materials">
+            <label for="advancedmaterials">Advanced Materials</label>
+            <input type="checkbox" id="businessprocess" name="businessprocess" value="Business Process">
+            <label for="businessprocess">Business Process</label>
+        </div>
+        <input type="text" name="City" required="required" placeholder="City" />
+        <input type="text" name="Country" required="required" placeholder="Country" />
+        <input type="hidden" name="dateadded" value="@DateTime.Now.ToString("yyyy-MM-dd")" />
+
+        <input type="submit" value="Submit" />
 </form>

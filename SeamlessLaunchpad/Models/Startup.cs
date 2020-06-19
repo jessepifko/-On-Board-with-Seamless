@@ -7,6 +7,7 @@ namespace SeamlessLaunchpad.Models
     {
         public Startup()
         {
+            Comment = new HashSet<Comment>();
             Favorites = new HashSet<Favorites>();
         }
 
@@ -22,7 +23,10 @@ namespace SeamlessLaunchpad.Models
         public string InterestedPartners { get; set; }
         public DateTime? DateRemoved { get; set; }
         public string Status { get; set; }
+        public int? TeamScore { get; set; }
+        public int? UniqueScore { get; set; }
 
+        public virtual ICollection<Comment> Comment { get; set; }
         public virtual ICollection<Favorites> Favorites { get; set; }
     }
 }

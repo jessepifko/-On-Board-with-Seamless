@@ -89,24 +89,40 @@ Select saved view:
                 fav = true;
             }
         }
-        <tr>
-            <td><a href="/Launchpad/ViewSingle?id=@s.Id">@s.Name</a></td>
-            <td>@s.City</td>
-            <td>@s.Country</td>
-            <td>@s.Summary</td>
-            <td>@s.Theme</td>
-            <td>@s.TechArea</td>
-            <td>@s.DateAdded</td>
-            <td>@s.InterestedPartners</td>
-            @if (fav)
-                {
-                    <td>Favorited!</td>
-                }
-                else
-                {
-                    <td></td>
-                }
-        </tr>
+<tr>
+    <td><a href="/Launchpad/ViewSingle?id=@s.Id">@s.Name</a></td>
+    <td>@s.City</td>
+    <td>@s.Country</td>
+    <td>@s.Summary</td>
+    <td>@s.Theme</td>
+    <td>@s.TechArea</td>
+    <td>@s.DateAdded</td>
+    <td>@s.InterestedPartners</td>
+    @if (fav)
+    {
+        int favoriteCountExcludingYou = Model.FavoriteCount.FirstOrDefault(x => x.Key == s.Id).Value - 1;
+        if (favoriteCountExcludingYou == 0)
+        {
+            <td>You</td>
+        }
+        else
+        {
+            <td>@favoriteCountExcludingYou and You</td>
+        }
+
+    }
+    else
+    {
+        int favoriteCountExcludingYou = Model.FavoriteCount.FirstOrDefault(x => x.Key == s.Id).Value;
+        if (favoriteCountExcludingYou == 0)
+        {
+            <td></td>
+        } else
+        {
+            <td>@Model.FavoriteCount.FirstOrDefault(x => x.Key == s.Id).Value</td>
+        }
+    }
+</tr>                                
      }
 </table>
 
