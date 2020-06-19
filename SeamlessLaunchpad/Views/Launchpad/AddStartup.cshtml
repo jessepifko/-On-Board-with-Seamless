@@ -5,38 +5,38 @@
 
 <h1>Add Startup</h1>
 
-<form action="/Launchpad/AddStartup" method="post">
-    <input type="text" name="Name" placeholder="Name" />
-    <input type="text" name="Summary" placeholder="Two Line Startup Summary" />
-    <div>
+<form action="/Launchpad/AddStartup" method="get">
+    <input type="text" name="Name" required="required" placeholder="Name" />
+    <input type="text" name="Summary" required="required" placeholder="Two Line Startup Summary" />
+    <div name="themes">
         <p>Select all the following themes that apply</p>
-        <input type="checkbox" id="thegoodlife" name="Theme" value="The Good Life">
+        <input type="checkbox" id="thegoodlife" name="thegoodlife" value="The Good Life">
         <label for="thegoodlife">The Good Life</label>
-        <input type="checkbox" id="healthbeyondthehotpital" name="Theme" value="Health Beyond the Hospital">
+        <input type="checkbox" id="healthbeyondthehotpital" name="healthbeyondthehotpital" value="Health Beyond the Hospital">
         <label for="healthbeyondthehotpital">Health Beyond the Hospital</label>
-        <input type="checkbox" id="robustfuture" name="Theme" value="Robust Future">
+        <input type="checkbox" id="robustfuture" name="robustfuture" value="Robust Future">
         <label for="robustfuture">Robust Future</label>
-        <input type="checkbox" id="convenienceandproductivity" name="Theme" value="Convenience & Productivity">
+        <input type="checkbox" id="convenienceandproductivity" name="convenienceandproductivity" value="Convenience & Productivity">
         <label for="convenienceandproductivity">Convenience & Productivity</label>
     </div>
-    <div>
+    <div name="techarea">
         <p>Select all from the following tech areas that apply</p>
-        <input type="checkbox" id="softwareai" name="TechArea" value="Software / AI">
+        <input type="checkbox" id="softwareai" name="softwareai" value="Software / AI">
         <label for="softwareai">Software / AI</label>
-        <input type="checkbox" id="sensing" name="TechArea" value="Sensing">
+        <input type="checkbox" id="sensing" name="sensing" value="Sensing">
         <label for="sensing">Sensing</label>
-        <input type="checkbox" id="robotics" name="TechArea" value="Robotics">
+        <input type="checkbox" id="robotics" name="robotics" value="Robotics">
         <label for="robotics">Robotics</label>
-        <input type="checkbox" id="products" name="TechArea" value="Products">
+        <input type="checkbox" id="products" name="products" value="Products">
         <label for="products">Products</label>
-        <input type="checkbox" id="advancedmaterials" name="TechArea" value="Advanced Materials">
+        <input type="checkbox" id="advancedmaterials" name="advancedmaterials" value="Advanced Materials">
         <label for="advancedmaterials">Advanced Materials</label>
-        <input type="checkbox" id="businessprocess" name="TechArea" value="Business Process">
+        <input type="checkbox" id="businessprocess" name="businessprocess" value="Business Process">
         <label for="businessprocess">Business Process</label>
     </div>
-    <input type="text" name="City" placeholder="City" />
-    <input type="text" name="Country" placeholder="Country" />
-    <input type="hidden" name="DateAdded" value="@DateTime.Now.ToString("yyyy-MM-dd")" />
+    <input type="text" name="City" required="required" placeholder="City" />
+    <input type="text" name="Country" required="required" placeholder="Country" />
+    <input type="hidden" name="dateadded" value="@DateTime.Now.ToString("yyyy-MM-dd")" />
 
     <input type="submit" value="Submit" />
 </form>

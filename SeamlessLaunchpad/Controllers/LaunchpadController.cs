@@ -64,18 +64,155 @@ namespace SeamlessLaunchpad.Controllers
         }
 
 
+ 
+        
         [HttpGet]
-        public IActionResult AddStartup()
+        public IActionResult AddStartup(string name, string summary, string thegoodlife = "", string healthbeyondthehotpital = "",
+            string robustfuture = "", string convenienceandproductivity = "", string softwareai = "", string sensing = "",
+            string robotics = "", string products = "", string advancedmaterials = "", string businessprocess = "",
+            string city = "", string country = "", string dateadded = "")
         {
+            if(name == null)
+            {
+                return View();
+            }
 
-            return View();
-        }
-        [HttpPost]
-        public IActionResult AddStartup(Models.Startup newStartup)
-        {
+            Models.Startup startupToAdd = new Models.Startup();
+            startupToAdd.Name = name;
+            startupToAdd.Summary = summary;
+            startupToAdd.City = city;
+            startupToAdd.Country = country;
+            string techAreas = "";
+
+            if (thegoodlife != "")
+            {
+                techAreas += thegoodlife;
+            } 
+            if (healthbeyondthehotpital != "")
+            {
+                if(techAreas == "")
+                {
+                    techAreas += healthbeyondthehotpital;
+                }
+                else
+                {
+                    techAreas += ", " + healthbeyondthehotpital;
+                }
+
+            }
+            if (robustfuture != "")
+            {
+                if (techAreas == "")
+                {
+                    techAreas += robustfuture;
+                }
+                else
+                {
+                    techAreas += ", " + robustfuture;
+                }
+
+            }
+            if (convenienceandproductivity != "")
+            {
+                if (techAreas == "")
+                {
+                    techAreas += convenienceandproductivity;
+                }
+                else
+                {
+                    techAreas += ", " + convenienceandproductivity;
+                }
+
+            }
+            if (convenienceandproductivity != "")
+            {
+                if (techAreas == "")
+                {
+                    techAreas += convenienceandproductivity;
+                }
+                else
+                {
+                    techAreas += ", " + convenienceandproductivity;
+                }
+
+            }
+            startupToAdd.TechArea = techAreas;
+
+            string themes = "";
+
+            if (softwareai != "")
+            {
+                themes += softwareai;
+            }
+            if (sensing != "")
+            {
+                if (themes == "")
+                {
+                    themes += sensing;
+                }
+                else
+                {
+                    themes += ", " + sensing;
+                }
+
+            }
+            if (robotics != "")
+            {
+                if (themes == "")
+                {
+                    themes += robotics;
+                }
+                else
+                {
+                    themes += ", " + robotics;
+                }
+
+            }
+            if (products != "")
+            {
+                if (themes == "")
+                {
+                    themes += products;
+                }
+                else
+                {
+                    themes += ", " + products;
+                }
+
+            }
+            if (advancedmaterials != "")
+            {
+                if (themes == "")
+                {
+                    themes += advancedmaterials;
+                }
+                else
+                {
+                    themes += ", " + advancedmaterials;
+                }
+
+            }
+            if (businessprocess != "")
+            {
+                if (themes == "")
+                {
+                    themes += businessprocess;
+                }
+                else
+                {
+                    themes += ", " + businessprocess;
+                }
+
+            }
+
+            startupToAdd.Theme = themes;
+
+            startupToAdd.DateAdded = DateTime.Parse(dateadded);
+
+
             if (ModelState.IsValid)
             {
-                _context.Startup.Add(newStartup);
+                _context.Startup.Add(startupToAdd);
                 _context.SaveChanges();
             }
             return RedirectToAction("Index");
