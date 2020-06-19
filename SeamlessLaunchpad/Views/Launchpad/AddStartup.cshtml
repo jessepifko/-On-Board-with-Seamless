@@ -6,8 +6,11 @@
 <h1>Add Startup</h1>
 
 <form action="/Launchpad/AddStartup" method="post">
+    <p>Enter startup name, company summary, team score, and uniqueness </p>
     <input type="text" name="Name" placeholder="Name" />
-    <input type="text" name="Summary" placeholder="Two Line Startup Summary" />
+    <input type="text" name="Summary" size="50" placeholder="Two Line Startup Summary" />
+    <input type="number" name="TeamScore" min=1 max=5 placeholder="Team Score (1-5)" />
+    <input type="number" name="Uniqueness" min=1 max=5 placeholder="Uniqueness (1-5)" />
     <div>
         <p>Select all the following themes that apply</p>
         <input type="checkbox" id="thegoodlife" name="Theme" value="The Good Life">
