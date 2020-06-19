@@ -56,7 +56,7 @@
                     <a href="/Launchpad/AddInterest?id=@Model.SingleStartupToView.Id">Add @Model.UserAssociation as Interested</a>
                 }
             </td>
-   
+
         </tr>
         <tr>
             <td>Watched as Favorite?</td>
@@ -71,10 +71,7 @@
                 }
             </td>
         </tr>
-        <tr>
-            <td>Comments:</td>
-            <td>@Model.SingleStartupToView.Comments <a href="/Launchpad/EditComments?id=@Model.SingleStartupToView.Id">...Add / Edit Comments</a></td>
-        </tr>
+
     </table>
     <h3>Predicted Performance</h3>
     <h4>Top 3 predicted successful startups in matching tech fields:</h4>
@@ -84,14 +81,14 @@
             <th>Summary</th>
             <th>Score</th>
         </tr>
-        @foreach(var p in Model.MatchingPredictedStartups)
-            {
-                <tr>
-                    <td>@p.CompanyName</td>
-                    <td>@p.CompanySummary</td>
-                    <td>@p.PredictedRating</td>
-                    </tr>
-            }
+        @foreach (var p in Model.MatchingPredictedStartups)
+        {
+            <tr>
+                <td>@p.CompanyName</td>
+                <td>@p.CompanySummary</td>
+                <td>@p.PredictedRating</td>
+            </tr>
+        }
     </table>
     <h3>News and Trends</h3>
     <h5>Company Name top 3 Search Results:</h5>
@@ -102,6 +99,16 @@
             <td>Result 3</td>
         </tr>
     </table>
+   
+    <h3>Comments</h3>
+    <h4>Seamless Member Comments</h4>
+
+    <a href="/Launchpad/AddComment?id=@Model.SingleStartupToView.Id">Add a comment</a>
+    <h4>@Model.UserAssociation only Comments</h4>
+    
+    <a href="/Launchpad/AddExclusiveComment?id=@Model.SingleStartupToView.Id">Add a comment visible only by @Model.UserAssociation members.</a>
+
+
     <p>Google Search Rank:</p>
     <h3>Predicted Alignment Within Seamless:</h3>
     <p>Mike's Magic Sauce Here</p>
@@ -109,5 +116,5 @@
     <p>Mike's Other Magic Sauce Here</p>
 
     <h3>Remove from Onboarding Dashboard</h3>
-    <a href ="/Launchpad/RemoveStartup/?id=@Model.SingleStartupToView.Id">Remove this startup from the Launchpad Dashboard</a>
+    <a href="/Launchpad/RemoveStartup/?id=@Model.SingleStartupToView.Id">Remove this startup from the Launchpad Dashboard</a>
 </div>

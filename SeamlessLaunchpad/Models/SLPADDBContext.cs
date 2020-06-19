@@ -23,8 +23,10 @@ namespace SeamlessLaunchpad.Models
         public virtual DbSet<AspNetUserRoles> AspNetUserRoles { get; set; }
         public virtual DbSet<AspNetUserTokens> AspNetUserTokens { get; set; }
         public virtual DbSet<AspNetUsers> AspNetUsers { get; set; }
+        public virtual DbSet<Comment> Comment { get; set; }
         public virtual DbSet<Favorites> Favorites { get; set; }
         public virtual DbSet<Startup> Startup { get; set; }
+        public virtual DbSet<StartupKeywords> StartupKeywords { get; set; }
         public virtual DbSet<UserView> UserView { get; set; }
         public virtual DbSet<ViewFilter> ViewFilter { get; set; }
 
@@ -140,6 +142,25 @@ namespace SeamlessLaunchpad.Models
                 entity.Property(e => e.UserName).HasMaxLength(256);
             });
 
+            modelBuilder.Entity<Comment>(entity =>
+            {
+                entity.Property(e => e.Association).HasMaxLength(20);
+
+                entity.Property(e => e.Comment1)
+                    .HasColumnName("Comment")
+                    .HasMaxLength(400);
+
+                entity.Property(e => e.CommentDate).HasColumnType("date");
+
+                entity.Property(e => e.UserName).HasMaxLength(256);
+
+                entity.HasOne(d => d.Startup)
+                    .WithMany(p => p.Comment)
+                    .HasForeignKey(d => d.StartupId)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("FK__Comment__Startup__6D0D32F4");
+            });
+
             modelBuilder.Entity<Favorites>(entity =>
             {
                 entity.Property(e => e.UserId).HasMaxLength(450);
@@ -178,6 +199,17 @@ namespace SeamlessLaunchpad.Models
                 entity.Property(e => e.TechArea).HasMaxLength(120);
 
                 entity.Property(e => e.Theme).HasMaxLength(120);
+            });
+
+            modelBuilder.Entity<StartupKeywords>(entity =>
+            {
+                entity.Property(e => e.Keywords)
+                    .IsRequired()
+                    .HasMaxLength(120);
+
+                entity.Property(e => e.StartupName)
+                    .IsRequired()
+                    .HasMaxLength(15);
             });
 
             modelBuilder.Entity<UserView>(entity =>
