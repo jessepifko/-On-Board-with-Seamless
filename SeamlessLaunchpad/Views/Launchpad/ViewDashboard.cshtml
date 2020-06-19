@@ -51,15 +51,16 @@ Filter startups:<br/>
     <input type="text" name="City" placeholder="City" @(!string.IsNullOrEmpty(ViewBag.City) ? $"value={ViewBag.City}" : "") /><br/>
     <input type="text" name="Country" placeholder="Country" @(!string.IsNullOrEmpty(ViewBag.Country) ? $"value={ViewBag.Country}" : "") /><br/>
     <input type="submit" value="Filter" /><br/>
+    <input type="text" placeholder="View name..." name="viewname" />
     <input type="submit" formaction="/Launchpad/SaveView" value="Save this View" /><br/>
 </form><br/>
 Select saved view:
 <form action="/Launchpad/GetSavedView" method="get">
     <select name="selectedView">
         <option value="">Choose...</option>
-        @foreach(int i in ViewBag.UserViews)
+        @foreach(UserView view in ViewBag.UserViews)
         {
-            @Html.Raw($"<option value=\"{i}\">{i}</option>")
+            @Html.Raw($"<option value=\"{view.Id}\">{view.Name}</option>")
         }
     </select><br/>
     <input type="submit" value="Select View"/>

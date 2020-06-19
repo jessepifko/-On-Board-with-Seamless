@@ -212,7 +212,7 @@ namespace SeamlessLaunchpad.Controllers
         public IActionResult ViewDashboard(string favOnly, string thegoodlife = "", string healthbeyondthehospital = "",
             string robustfuture = "", string convenienceproductivity = "", string softwareai = "", string sensing = "",
             string robotics = "", string products = "", string advancedmaterials = "", string businessprocess = "",
-            string city = "", string country = "")
+            string city = "", string country = "", string viewname = "")
         {
             //Grabbing the User's seamless Association 
             string id = User.FindFirst(ClaimTypes.NameIdentifier).Value;
@@ -221,10 +221,10 @@ namespace SeamlessLaunchpad.Controllers
             var startups = _context.Startup.Where(x => x.Status == null).ToList();
 
             List<UserView> views = _context.UserView.Where(x => x.UserId.Equals(thisUser.Id)).ToList();
-            ViewBag.UserViews = new List<int>();
+            ViewBag.UserViews = new List<UserView>();
             foreach (UserView v in views)
             {
-                ViewBag.UserViews.Add(v.Id);
+                ViewBag.UserViews.Add(v);
             }
             //Sending list of startups and the favorites from DB and the user's association into the View
             if (favOnly == "yes")
@@ -243,7 +243,7 @@ namespace SeamlessLaunchpad.Controllers
                 //Making a list of "popularity" against startup ID
                 Dictionary<int, int> startupFavoriteCount = new Dictionary<int, int>();
                 List<Favorites> allFavorites = _context.Favorites.ToList<Favorites>();
-                foreach (var s in startups)
+                foreach (var s in onlyFavorites)
                 {
                     int favCount = allFavorites.Where(x => x.StartupId == s.Id).Count();
                     startupFavoriteCount.Add(s.Id, favCount);
@@ -372,10 +372,14 @@ namespace SeamlessLaunchpad.Controllers
         public async Task<IActionResult> SaveView(string favOnly, string thegoodlife = "", string healthbeyondthehospital = "",
             string robustfuture = "", string convenienceproductivity = "", string softwareai = "", string sensing = "",
             string robotics = "", string products = "", string advancedmaterials = "", string businessprocess = "",
-            string city = "", string country = "")
+            string city = "", string country = "", string viewname = "")
         {
+            if (string.IsNullOrEmpty(viewname))
+            {
+                return Forbid();
+            }
             string userId = User.FindFirst(ClaimTypes.NameIdentifier).Value;
-            UserView thisView = new UserView { UserId = userId };
+            UserView thisView = new UserView { UserId = userId, Name = viewname };
             _context.UserView.Add(thisView);
             await _context.SaveChangesAsync();
             if (!string.IsNullOrEmpty(thegoodlife))
