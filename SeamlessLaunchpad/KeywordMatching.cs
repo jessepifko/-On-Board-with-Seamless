@@ -3,6 +3,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion.Internal;
 using SeamlessLaunchpad.Models;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Net.NetworkInformation;
 using System.Text.RegularExpressions;
@@ -15,6 +16,7 @@ namespace SeamlessLaunchpad
 
         public static Dictionary<string, List<string>> themeToAlignmentPairing;
         public static Dictionary<string, List<string>> techAreaToAlignmentPairing;
+        private static readonly string keywordApiKey;
 
         static KeywordMatching()
         {
@@ -27,6 +29,9 @@ namespace SeamlessLaunchpad
             techAreaToAlignmentPairing.Add("Sensing", new List<string> { "Whirlpool", "Faurecia", "Emergent" });
             techAreaToAlignmentPairing.Add("Software / AI", new List<string> { "Whirlpool", "Amway", "Emergent", "Trinity" });
             techAreaToAlignmentPairing.Add("Robotics", new List<string> { "Bissel", "Emergent", "Trinity" });
+            StreamReader sr = new StreamReader(File.OpenRead("keywordapi.txt"));
+            keywordApiKey = sr.ReadToEnd().Trim(' ', '\r', '\n');
+            sr.Close();
         }
 
         public static List<string> GetKeywords(string desc)
@@ -144,6 +149,48 @@ namespace SeamlessLaunchpad
                 return "";
             }
             return string.Join(",", alignedCompanies);
+        }
+
+        public static async Task<List<StartupKeywords>> SetupKeywords(List<StartupContainer> startups, SLPADDBContext context)
+        {
+            List<StartupKeywords> lsk = new List<StartupKeywords>();
+            foreach (StartupContainer s in startups)
+            {
+                try
+                {
+                    List<Keyword> keywords = (await Utilities.PostApiResponse<KeywordApiResponse>("v4", "keywords", "https://apis.paralleldots.com", "api_key", keywordApiKey, "text", Uri.EscapeDataString(s.Fields.CompanySummary))).FirstOrDefault().Keywords;
+
+                    List<string> words = new List<string>();
+                    keywords.ForEach(x => words.Add(x.Text));
+
+                    StartupKeywords sk = new StartupKeywords { Keywords = string.Join(',', words.ToArray()), StartupName = s.Fields.CompanyName };
+
+                    lsk.Add(sk);
+                    context.StartupKeywords.Add(sk);
+
+                    await context.SaveChangesAsync();
+                }
+                catch
+                {
+
+                }
+
+                await Task.Delay(1000); //to avoid getting rate-limited by the api
+            }
+            return lsk;
+        }
+
+        public static async Task<List<Keyword>> GetKeywords(StartupContainer startup)
+        {
+            KeywordApiResponse keywords = (
+                await Utilities.PostApiResponse<KeywordApiResponse>(
+                    "v4",
+                    "keywords",
+                    "https://apis.paralleldots.com",
+                    "api_key", keywordApiKey,
+                    "text", startup.Fields.CompanySummary))
+                    .FirstOrDefault();
+            return keywords.Keywords;
         }
     }
 }

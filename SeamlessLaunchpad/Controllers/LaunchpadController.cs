@@ -223,13 +223,21 @@ namespace SeamlessLaunchpad.Controllers
         public IActionResult ViewDashboard(string favOnly, string thegoodlife = "", string healthbeyondthehospital = "",
             string robustfuture = "", string convenienceproductivity = "", string softwareai = "", string sensing = "",
             string robotics = "", string products = "", string advancedmaterials = "", string businessprocess = "",
-            string city = "", string country = "")
+            string city = "", string country = "", string viewname = "")
         {
             //Grabbing the User's seamless Association 
             string id = User.FindFirst(ClaimTypes.NameIdentifier).Value;
             var thisUser = _context.AspNetUsers.FirstOrDefault(x => x.Id == id);
             List<Favorites> favoriteStartups = _context.Favorites.Where(x => x.UserId == id).ToList<Favorites>();
             List<Models.Startup> startups = new List<Models.Startup>();
+
+            List<UserView> views = _context.UserView.Where(x => x.UserId.Equals(thisUser.Id)).ToList();
+            ViewBag.UserViews = new List<UserView>();
+            foreach (UserView v in views)
+            {
+                ViewBag.UserViews.Add(v);
+            }
+            //Sending list of startups and the favorites from DB and the user's association into the View
             if (favOnly == "yes")
             {
                 var startupsToView = _context.Startup.Where(x => x.Status == null).ToList();
@@ -244,140 +252,116 @@ namespace SeamlessLaunchpad.Controllers
                         }
                     }
                 }
-
             }
             else
             {
-                var startupsToView = _context.Startup.Where(x => x.Status == null).ToList();
-                foreach (var s in startupsToView)
-                {
-                    startups.Add(s);
-                }
+                startups = _context.Startup.Where(x => x.Status == null).ToList();
             }
-
-
-
-            List<UserView> views = _context.UserView.Where(x => x.UserId.Equals(thisUser.Id)).ToList();
-            ViewBag.UserViews = new List<int>();
-            foreach (UserView v in views)
+            if (!string.IsNullOrEmpty(thegoodlife))
             {
-                ViewBag.UserViews.Add(v.Id);
+                startups = startups.Where(x => x.Theme.Contains("The Good Life")).ToList();
+                ViewBag.TheGoodLife = true;
             }
-            //Sending list of startups and the favorites from DB and the user's association into the View
-            //if (favOnly == "yes")
-            //{
+            if (!string.IsNullOrEmpty(healthbeyondthehospital))
+            {
+                startups = startups.Where(x => x.Theme.Contains("Health Beyond the Hospital")).ToList();
+                ViewBag.HealthBeyondTheHospital = true;
+            }
+            if (!string.IsNullOrEmpty(robustfuture))
+            {
+                startups = startups.Where(x => x.Theme.Contains("Robust Future")).ToList();
+                ViewBag.RobustFuture = true;
+            }
+            if (!string.IsNullOrEmpty(convenienceproductivity))
+            {
+                startups = startups.Where(x => x.Theme.Contains("Convenience")).ToList();
+                ViewBag.ConvenienceProductivity = true;
+            }
+            if (!string.IsNullOrEmpty(softwareai))
+            {
+                startups = startups.Where(x => x.TechArea.Contains("Software / AI")).ToList();
+                ViewBag.SoftwareAI = true;
+            }
+            if (!string.IsNullOrEmpty(sensing))
+            {
+                startups = startups.Where(x => x.TechArea.Contains("Sensing")).ToList();
+                ViewBag.Sensing = true;
+            }
+            if (!string.IsNullOrEmpty(robotics))
+            {
+                startups = startups.Where(x => x.TechArea.Contains("Robotics")).ToList();
+                ViewBag.Robotics = true;
+            }
+            if (!string.IsNullOrEmpty(products))
+            {
+                startups = startups.Where(x => x.TechArea.Contains("Products")).ToList();
+                ViewBag.Products = true;
+            }
+            if (!string.IsNullOrEmpty(advancedmaterials))
+            {
+                startups = startups.Where(x => x.TechArea.Contains("Advanced Materials")).ToList();
+                ViewBag.AdvancedMaterials = true;
+            }
+            if (!string.IsNullOrEmpty(businessprocess))
+            {
+                startups = startups.Where(x => x.TechArea.Contains("Business Process")).ToList();
+                ViewBag.BusinessProcess = true;
+            }
+            if (!string.IsNullOrEmpty(city))
+            {
+                startups = startups.Where(x => x.City != null && x.City.ToLower().Contains(city.ToLower())).ToList();
+                ViewBag.City = city;
+            }
+            if (!string.IsNullOrEmpty(country))
+            {
+                startups = startups.Where(x => x.Country != null && x.Country.ToLower().Contains(country.ToLower())).ToList();
+                ViewBag.Country = country;
+            }
+            Dictionary<int, int> startupFavoriteCount = new Dictionary<int, int>();
+            List<Favorites> allFavorites = _context.Favorites.ToList<Favorites>();
+            Dictionary<int, int> startupCommentCount = new Dictionary<int, int>();
+            List<Comment> Comments = _context.Comment.ToList<Comment>();
+            Dictionary<int, int> successPredictorScore = new Dictionary<int, int>();
+            //FeedbackListRootObject feedbackList = (await Utilities.GetApiResponse<FeedbackListRootObject>("v0/appFo187B73tuYhyg", "Feedback", "https://api.airtable.com", "api_key", ApiKey)).FirstOrDefault();
+            foreach (var s in startups)
+            {
+                int favCount = allFavorites.Where(x => x.StartupId == s.Id).Count();
+                startupFavoriteCount.Add(s.Id, favCount);
+                int comCount = Comments.Where(x => x.StartupId == s.Id &&
+                                                x.Restricted == false).Count();
+                startupCommentCount.Add(s.Id, comCount);
+                //int success = SuccessPredictor.PredictSuccess(, feedbackList.Records);
 
-            //}
-            //else
-            //{
-                if (!string.IsNullOrEmpty(thegoodlife))
-                {
-                    startups = startups.Where(x => x.Theme.Contains("The Good Life")).ToList();
-                    ViewBag.TheGoodLife = true;
-                }
-                if (!string.IsNullOrEmpty(healthbeyondthehospital))
-                {
-                    startups = startups.Where(x => x.Theme.Contains("Health Beyond the Hospital")).ToList();
-                    ViewBag.HealthBeyondTheHospital = true;
-                }
-                if (!string.IsNullOrEmpty(robustfuture))
-                {
-                    startups = startups.Where(x => x.Theme.Contains("Robust Future")).ToList();
-                    ViewBag.RobustFuture = true;
-                }
-                if (!string.IsNullOrEmpty(convenienceproductivity))
-                {
-                    startups = startups.Where(x => x.Theme.Contains("Convenience")).ToList();
-                    ViewBag.ConvenienceProductivity = true;
-                }
-                if (!string.IsNullOrEmpty(softwareai))
-                {
-                    startups = startups.Where(x => x.TechArea.Contains("Software / AI")).ToList();
-                    ViewBag.SoftwareAI = true;
-                }
-                if (!string.IsNullOrEmpty(sensing))
-                {
-                    startups = startups.Where(x => x.TechArea.Contains("Sensing")).ToList();
-                    ViewBag.Sensing = true;
-                }
-                if (!string.IsNullOrEmpty(robotics))
-                {
-                    startups = startups.Where(x => x.TechArea.Contains("Robotics")).ToList();
-                    ViewBag.Robotics = true;
-                }
-                if (!string.IsNullOrEmpty(products))
-                {
-                    startups = startups.Where(x => x.TechArea.Contains("Products")).ToList();
-                    ViewBag.Products = true;
-                }
-                if (!string.IsNullOrEmpty(advancedmaterials))
-                {
-                    startups = startups.Where(x => x.TechArea.Contains("Advanced Materials")).ToList();
-                    ViewBag.AdvancedMaterials = true;
-                }
-                if (!string.IsNullOrEmpty(businessprocess))
-                {
-                    startups = startups.Where(x => x.TechArea.Contains("Business Process")).ToList();
-                    ViewBag.BusinessProcess = true;
-                }
-                if (!string.IsNullOrEmpty(city))
-                {
-                    startups = startups.Where(x => x.City != null && x.City.ToLower().Contains(city.ToLower())).ToList();
-                    ViewBag.City = city;
-                }
-                if (!string.IsNullOrEmpty(country))
-                {
-                    startups = startups.Where(x => x.Country != null && x.Country.ToLower().Contains(country.ToLower())).ToList();
-                    ViewBag.Country = country;
-                }
-      
-            //}
-                //Making a list of "popularity" against startup ID
-                //Making a list of "popularity" against startup ID
-                Dictionary<int, int> startupFavoriteCount = new Dictionary<int, int>();
-                List<Favorites> allFavorites = _context.Favorites.ToList<Favorites>();
-                Dictionary<int, int> startupCommentCount = new Dictionary<int, int>();
-                List<Comment> Comments = _context.Comment.ToList<Comment>();
-                Dictionary<int, int> successPredictorScore = new Dictionary<int, int>();
-                //FeedbackListRootObject feedbackList = (await Utilities.GetApiResponse<FeedbackListRootObject>("v0/appFo187B73tuYhyg", "Feedback", "https://api.airtable.com", "api_key", ApiKey)).FirstOrDefault();
-                foreach (var s in startups)
-                {
-                    int favCount = allFavorites.Where(x => x.StartupId == s.Id).Count();
-                    startupFavoriteCount.Add(s.Id, favCount);
-                    int comCount = Comments.Where(x => x.StartupId == s.Id &&
-                                                    x.Restricted == false).Count();
-                    startupCommentCount.Add(s.Id, comCount);
-                    //int success = SuccessPredictor.PredictSuccess(, feedbackList.Records);
+            }
 
-                }
-                
-                List<KeyValuePair<int, int>> orderedStartupFavoriteCount = startupFavoriteCount.ToList().OrderBy(x => x.Value).Reverse().ToList();
+            List<KeyValuePair<int, int>> orderedStartupFavoriteCount = startupFavoriteCount.ToList().OrderBy(x => x.Value).Reverse().ToList();
 
-                List<KeyValuePair<int, int>> orderedStartupCommentCount = startupCommentCount.ToList().OrderBy(x => x.Value).Reverse().ToList();
+            List<KeyValuePair<int, int>> orderedStartupCommentCount = startupCommentCount.ToList().OrderBy(x => x.Value).Reverse().ToList();
 
 
-                ViewBag.Prediction = new List<int>();
-                foreach (var startup in startups)
+            ViewBag.Prediction = new List<int>();
+            foreach (var startup in startups)
+            {
+                if (startup.TeamScore == null || startup.UniqueScore == null)
                 {
-                    if (startup.TeamScore == null || startup.UniqueScore == null)
-                    {
-                        ViewBag.Prediction.Add(0);
-                        continue;
-                    }
-                    int prediction = NewStartupPredictor((int)startup.TeamScore, (int)startup.UniqueScore);
-
-                    ViewBag.Prediction.Add(prediction);
+                    ViewBag.Prediction.Add(0);
+                    continue;
                 }
+                int prediction = NewStartupPredictor((int)startup.TeamScore, (int)startup.UniqueScore);
+
+                ViewBag.Prediction.Add(prediction);
+            }
 
 
-                FavoritesViewModel view = new FavoritesViewModel() {
-                    StartupsToReview = startups,
-                    FavoriteStartups = favoriteStartups,
-                    UserAssociation = thisUser.Association,
-                    FavoriteCount = orderedStartupFavoriteCount,
-                    CommentCount = orderedStartupCommentCount
-                };
-                return View(view);
+            FavoritesViewModel view = new FavoritesViewModel()
+            {
+                StartupsToReview = startups,
+                FavoriteStartups = favoriteStartups,
+                UserAssociation = thisUser.Association,
+                FavoriteCount = orderedStartupFavoriteCount,
+                CommentCount = orderedStartupCommentCount
+            };
+            return View(view);
         }
 
         [Authorize]
@@ -409,10 +393,14 @@ namespace SeamlessLaunchpad.Controllers
         public async Task<IActionResult> SaveView(string favOnly, string thegoodlife = "", string healthbeyondthehospital = "",
             string robustfuture = "", string convenienceproductivity = "", string softwareai = "", string sensing = "",
             string robotics = "", string products = "", string advancedmaterials = "", string businessprocess = "",
-            string city = "", string country = "")
+            string city = "", string country = "", string viewname = "")
         {
+            if (string.IsNullOrEmpty(viewname))
+            {
+                return Forbid();
+            }
             string userId = User.FindFirst(ClaimTypes.NameIdentifier).Value;
-            UserView thisView = new UserView { UserId = userId };
+            UserView thisView = new UserView { UserId = userId, Name = viewname };
             _context.UserView.Add(thisView);
             await _context.SaveChangesAsync();
             if (!string.IsNullOrEmpty(thegoodlife))
@@ -831,6 +819,11 @@ namespace SeamlessLaunchpad.Controllers
 
         }
 
-
+        public async Task<IActionResult> TestKeywordExtraction()
+        {
+            List<StartupContainer> sc = (await Utilities.GetApiResponse<StartupListRootObject>("v0/appFo187B73tuYhyg", "Master List", "https://api.airtable.com", "api_key", ApiKey)).FirstOrDefault().Records;
+            List<StartupKeywords> lsk = await KeywordMatching.SetupKeywords(sc, _context);
+            return View(lsk);
+        }
     }
 }

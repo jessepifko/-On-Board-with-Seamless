@@ -7,8 +7,7 @@
 
 
 <h3>ViewDashboard</h3>
-<<<<<<< HEAD
-=======
+
 <a href="\Launchpad\AddStartup">Add a Startup</a>
 <h4>Hot Prospects:</h4>
 @for (int i = 0; i < Math.Min(2, Model.FavoriteCount.Count); i++)
@@ -16,7 +15,6 @@
     int hotStartupId = Model.FavoriteCount[i].Key;
     <p>@Model.FavoriteCount[i].Value other Seamless users are watching <a href="/Launchpad/ViewSingle/?id=@hotStartupId"> @Model.StartupsToReview[i].Name </a></p>
 }
->>>>>>> jesse
 
 <h4>Current Prospects:</h4>
 <a href="/Launchpad/ViewDashboard?favOnly=yes">View only your Favorites</a>
@@ -53,17 +51,16 @@ Filter startups:
     </div>
     <input type="text" name="City" placeholder="City" @(!string.IsNullOrEmpty(ViewBag.City) ? $"value={ViewBag.City}" : "") /><br />
     <input type="text" name="Country" placeholder="Country" @(!string.IsNullOrEmpty(ViewBag.Country) ? $"value={ViewBag.Country}" : "") /><br />
-    <input type="submit" value="Filter" /><br />
-    <input type="submit" formaction="/Launchpad/SaveView" value="Save this View" /><br />
-</form>
-<br />
+    <input type="text" placeholder="View name..." name="viewname" />
+    <input type="submit" formaction="/Launchpad/SaveView" value="Save this View" /><br/>
+</form><br/>
 Select saved view:
 <form action="/Launchpad/GetSavedView" method="get">
     <select name="selectedView">
         <option value="">Choose...</option>
-        @foreach (int i in ViewBag.UserViews)
+        @foreach(UserView view in ViewBag.UserViews)
         {
-            @Html.Raw($"<option value=\"{i}\">{i}</option>")
+            @Html.Raw($"<option value=\"{view.Id}\">{view.Name}</option>")
         }
     </select><br />
     <input type="submit" value="Select View" />
@@ -78,19 +75,12 @@ Select saved view:
         <th>Tech Area</th>
         <th>Date Added</th>
         <th>Declared Interest</th>
-<<<<<<< HEAD
         <th>Favorited</th>
         <th>Commented</th>
-    </tr>
-    @foreach (var s in Model.StartupsToReview)
-    {
-=======
-        <th>Favorite</th>
         <th>Success Predictor</th>
     </tr>
     @for (int i = 0; i < Model.StartupsToReview.Count; i++)
      {
->>>>>>> jesse
 
         bool fav = false;
 
@@ -112,7 +102,7 @@ Select saved view:
             <td>@Model.StartupsToReview[i].InterestedPartners</td>
             @if (fav)
             {
-                int favoriteCountExcludingYou = Model.FavoriteCount.FirstOrDefault(x => x.Key == s.Id).Value - 1;
+                int favoriteCountExcludingYou = Model.FavoriteCount.FirstOrDefault(x => x.Key == Model.StartupsToReview[i].Id).Value - 1;
                 if (favoriteCountExcludingYou == 0)
                 {
                     <td>You</td>
@@ -125,19 +115,18 @@ Select saved view:
             }
             else
             {
-                int favoriteCountExcludingYou = Model.FavoriteCount.FirstOrDefault(x => x.Key == s.Id).Value;
+                int favoriteCountExcludingYou = Model.FavoriteCount.FirstOrDefault(x => x.Key == Model.StartupsToReview[i].Id).Value;
                 if (favoriteCountExcludingYou == 0)
                 {
-                    <td></td>
+                    <td>0</td>
                 }
-<<<<<<< HEAD
                 else
                 {
-                    <td>@Model.FavoriteCount.FirstOrDefault(x => x.Key == s.Id).Value</td>
+                    <td>@Model.FavoriteCount.FirstOrDefault(x => x.Key == Model.StartupsToReview[i].Id).Value</td>
                 }
             }
             @{
-                int commentCount = Model.CommentCount.FirstOrDefault(x => x.Key == s.Id).Value;
+                int commentCount = Model.CommentCount.FirstOrDefault(x => x.Key == Model.StartupsToReview[i].Id).Value;
                 if (commentCount == 0)
                 {
                     <td></td>
@@ -147,7 +136,6 @@ Select saved view:
                     <td>@commentCount</td>
                 }
             }
-=======
             <td>
           
                 <p align="center">
@@ -160,7 +148,6 @@ Select saved view:
 
            @* NEWSTARTUP RATING GOES HERE *@
             </td>
->>>>>>> jesse
         </tr>
 
     }

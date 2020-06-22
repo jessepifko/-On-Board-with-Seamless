@@ -2,7 +2,9 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Net;
+using System.Net.Http;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Http;
 using Newtonsoft.Json;
 
 namespace SeamlessLaunchpad
@@ -10,6 +12,13 @@ namespace SeamlessLaunchpad
     public class Utilities
     {
         public const string BaseApi = "https://api.airtable.com";
+
+        public static readonly HttpClient postClient;
+
+        static Utilities()
+        {
+            postClient = new HttpClient();
+        }
         /// <summary>
         /// Builds a set of key value pairs from a list of strings
         ///
@@ -94,7 +103,55 @@ namespace SeamlessLaunchpad
             
             return ret;
         }
-        
+
+        public static async Task<List<T>> PostApiResponse<T>(string controller, string action, string baseUrl,
+            params KeyValuePair<string, string>[] options) where T : new()
+        {
+            string url = $"{baseUrl}/" +
+                         $"{controller}/" +
+                         $"{Uri.EscapeDataString(action)}";
+
+            var postVariables = new FormUrlEncodedContent(options);
+
+            HttpResponseMessage response = await postClient.PostAsync(url, postVariables);
+
+            string responseString = await response.Content.ReadAsStringAsync();
+
+            List<T> ret;
+            try
+            {
+                ret = JsonConvert.DeserializeObject<List<T>>(responseString);
+            }
+            catch (JsonSerializationException) // most likely we only got one object back
+            {
+                ret = new List<T> { JsonConvert.DeserializeObject<T>(responseString) };
+            }
+
+            return ret;
+        }
+
+        /// <summary>
+        /// Calls an api and populates a model
+        /// </summary>
+        /// <param name="controller">The controller (in the API) to call data from</param>
+        /// <param name="action">The endpoint to call to</param>
+        /// <param name="baseUrl">The api location (everything before the the / after .com (ex. https://api.airtable.com)</param>
+        /// <param name="options">A list of options to send to the endpoint (?api_key=key == "api_key", "key")</param>
+        /// <typeparam name="T">The model to deserialize into</typeparam>
+        /// <returns>A populated model with the data that the api returned</returns>
+        public static async Task<List<T>> PostApiResponse<T>(string controller, string action, string baseUrl, params string[] options)
+            where T : new()
+        {
+            var keyValuePairs = Utilities.BuildApiArguments(options);
+            if (keyValuePairs == null && options.Length > 0)
+            {
+                return new List<T>();
+            }
+
+            return await PostApiResponse<T>(controller, action, baseUrl,
+                (keyValuePairs ?? new List<KeyValuePair<string, string>>()).ToArray());
+        }
+
         // GetApiResponse<Startup>("v0/appFo187B73tuYhyg", "Master List", Utilities.BaseApi, "api_key", ApiKey, "Name", "Startup 1"); 
         // Equates TO: https://api.airtable.com/v0/appFo187B73tuYhyg/Master%20List?api_key={ApiKey}&Name=Startup%201
         /// <summary>

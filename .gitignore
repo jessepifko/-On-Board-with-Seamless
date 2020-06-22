@@ -5,4 +5,8 @@ bin/
 obj/
 secret.txt
 api.txt
+<<<<<<< HEAD
 newsapi.txt
+=======
+keywordapi.txt
+>>>>>>> mike
