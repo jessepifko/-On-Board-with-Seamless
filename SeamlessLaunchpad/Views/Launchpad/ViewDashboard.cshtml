@@ -10,6 +10,7 @@
 }
 
 <h3>ViewDashboard</h3>
+<a href="\Launchpad\AddStartup">Add a Startup</a>
 <h4>Hot Prospects:</h4>
 @for (int i = 0; i < Math.Min(2, Model.FavoriteCount.Count); i++)
 {
@@ -75,28 +76,29 @@ Select saved view:
         <th>Date Added</th>
         <th>Declared Interest</th>
         <th>Favorite</th>
+        <th>Success Predictor</th>
     </tr>
-    @foreach (var s in Model.StartupsToReview)
-    {
-        
+    @for (int i = 0; i < Model.StartupsToReview.Count; i++)
+     {
+
         bool fav = false;
-         
+
         @foreach (var f in Model.FavoriteStartups)
         {
-            if (f.StartupId == s.Id)
+            if (f.StartupId == Model.StartupsToReview[i].Id)
             {
                 fav = true;
             }
         }
         <tr>
-            <td><a href="/Launchpad/ViewSingle?id=@s.Id">@s.Name</a></td>
-            <td>@s.City</td>
-            <td>@s.Country</td>
-            <td>@s.Summary</td>
-            <td>@s.Theme</td>
-            <td>@s.TechArea</td>
-            <td>@s.DateAdded</td>
-            <td>@s.InterestedPartners</td>
+            <td><a href="/Launchpad/ViewSingle?id=@Model.StartupsToReview[i].Id">@Model.StartupsToReview[i].Name</a></td>
+            <td>@Model.StartupsToReview[i].City</td>
+            <td>@Model.StartupsToReview[i].Country</td>
+            <td>@Model.StartupsToReview[i].Summary</td>
+            <td>@Model.StartupsToReview[i].Theme</td>
+            <td>@Model.StartupsToReview[i].TechArea</td>
+            <td>@Model.StartupsToReview[i].DateAdded</td>
+            <td>@Model.StartupsToReview[i].InterestedPartners</td>
             @if (fav)
                 {
                     <td>Favorited!</td>
@@ -105,6 +107,18 @@ Select saved view:
                 {
                     <td></td>
                 }
+            <td>
+          
+                <p align="center">
+                    @* @ViewBag.Prediction[i] *@
+                    @if (@ViewBag.Prediction[i] >= 4)
+                    {
+                        <img src="~/creativboard-converted-01-.jpg" width="60" height="35" />
+                    }
+                </p>
+
+           @* NEWSTARTUP RATING GOES HERE *@
+            </td>
         </tr>
      }
 </table>
