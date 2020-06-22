@@ -8,8 +8,8 @@
 
 <form action="/Launchpad/AddStartup" method="get">
     <p>Enter startup name, company summary, team score, and uniqueness </p>
-    <input type="text" name="Name" placeholder="Name" />
-    <input type="text" name="Summary" size="50" placeholder="Two Line Startup Summary" />
+    <input type="text" name="Name" required="required" placeholder="Name" />
+    <input type="text" name="Summary" required="required" size="50" placeholder="Two Line Startup Summary" />
     <input type="number" name="TeamScore" min=1 max=5 placeholder="Team Score (1-5)" />
     <input type="number" name="Uniqueness" min=1 max=5 placeholder="Uniqueness (1-5)" />
         <div name="themes">

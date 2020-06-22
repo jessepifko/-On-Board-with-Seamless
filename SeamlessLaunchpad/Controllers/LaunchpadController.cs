@@ -5,6 +5,7 @@ using System.IO;
 using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
+using Final_Project_NewsApi_Testing.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Diagnostics;
@@ -20,6 +21,7 @@ namespace SeamlessLaunchpad.Controllers
     {
         private readonly SLPADDBContext _context;
         private static readonly string ApiKey;
+        private static readonly string NewsApiKey;
 
         public LaunchpadController(SLPADDBContext context)
         {
@@ -30,16 +32,18 @@ namespace SeamlessLaunchpad.Controllers
         {
             var keyStream = new StreamReader(System.IO.File.OpenRead("api.txt"));
             ApiKey = keyStream.ReadToEnd().Trim('\n');
+            
+            var newsKeyStream = new StreamReader(System.IO.File.OpenRead("newsapi.txt"));
+            NewsApiKey = newsKeyStream.ReadToEnd().Trim('\n');
             keyStream.Close();
+            
         }
 
         // Gets first value in sequence or returns null
         [Authorize]
         public IActionResult Index()
         {
-            //old cold pulling form airtable
-            //StartupListRootObject returnValue = (await Utilities.GetApiResponse<StartupListRootObject>("v0/appFo187B73tuYhyg", "Master List", "https://api.airtable.com", "api_key", ApiKey)).FirstOrDefault();
-            //return View(returnValue.Records);
+           
             string id = User.FindFirst(ClaimTypes.NameIdentifier).Value;
             var thisUser = _context.AspNetUsers.FirstOrDefault(x => x.Id == id);
             return View(thisUser);
@@ -559,14 +563,30 @@ namespace SeamlessLaunchpad.Controllers
             var thisUser = _context.AspNetUsers.FirstOrDefault(x => x.Id == userId);
             //INSERT call to Mike's code here, MAYBE, that COULD return similar startups from the API and write them to a list of our Startup model 
             //OR we could add a list of API startup model to the viewmodel class, filter by what Mike's code returns, and pass that on...
-            //INSERT call to Jess's code here, that will return an int for successViewStartupFavorite view = new ViewStartupFavorite() {
+            //INSERT call to Jesse's code here, that will return an int for successViewStartupFavorite view = new ViewStartupFavorite() {
 
             List<PredictedApiStartup> topMatching = await CompareSuccess(id);
 
-
+            Models.Startup startupToView = _context.Startup.Find(id);
+            string nameToSearch = startupToView.Name.Replace(" ","+");
+            NewsResult searchResult = (await Utilities.GetApiResponse<NewsResult>("v2", "everything", "https://newsapi.org", "apiKey", NewsApiKey, "q", nameToSearch)).FirstOrDefault();   //       "v0 /appFo187B73tuYhyg", "Master List", "https://api.airtable.com", "api_key", ApiKey)).FirstOrDefault();
+            List<Article> articles = new List<Article>();
+            for (int i = 0; i < 5; i++)
+            {
+                try
+                {
+                    articles.Add(searchResult.articles[i]);
+                } 
+                catch
+                {
+                    continue;
+                }
+            }
+                
+            
             FavoritesViewModel view = new FavoritesViewModel()
             {
-                SingleStartupToView = _context.Startup.Find(id),
+                SingleStartupToView = startupToView,
                 FavoriteStartups = _context.Favorites.Where(x => x.UserId == userId).ToList<Favorites>(),
                 UserAssociation = thisUser.Association,
                 MatchingPredictedStartups = topMatching,
@@ -574,7 +594,9 @@ namespace SeamlessLaunchpad.Controllers
                                                     x.Restricted == false).ToList<Comment>(),
                 ExclusiveComments = _context.Comment.Where(x => x.StartupId == id &&
                                                            x.Restricted == true &&
-                                                           x.Association == thisUser.Association).ToList<Comment>()
+                                                           x.Association == thisUser.Association).ToList<Comment>(),
+                Articles = articles
+                                                           
             };
 
             return View(view);

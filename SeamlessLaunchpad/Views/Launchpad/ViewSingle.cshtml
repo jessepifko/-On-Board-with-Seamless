@@ -93,13 +93,20 @@
 
     </table>
     <h3>News and Trends</h3>
-    <h5>Company Name top 3 Search Results:</h5>
+    <h5>Top 5 Search Results for @Model.SingleStartupToView.Name:</h5>
     <table class="table">
-        <tr>
-            <td>Result 1</td>
-            <td>Result 2</td>
-            <td>Result 3</td>
-        </tr>
+        @foreach(var article in Model.Articles)
+        {
+            <tr>
+                <td><a href ="@article.url" target="_blank" >@article.title</a></td>
+                <td>@article.publishedAt</td>
+            </tr>
+            <tr>
+                <td><img src="@article.urlToImage" style="width:20%; height:20%"  /></td>
+                <td>@article.description</td>
+            </tr>
+        }
+            
     </table>
 
     <h3>Comments</h3>
