@@ -1,4 +1,5 @@
-﻿using SeamlessLaunchpad.Models;
+﻿using Final_Project_NewsApi_Testing.Models;
+using SeamlessLaunchpad.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -27,7 +28,7 @@ namespace SeamlessLaunchpad.ViewModel
 
         public List<Comment> Comments { get; set; }
 
-
+        public List<Article> Articles { get; set; }
 
     }
 }
