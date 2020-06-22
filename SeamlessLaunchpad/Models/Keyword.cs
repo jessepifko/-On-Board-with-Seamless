@@ -10,6 +10,7 @@ namespace SeamlessLaunchpad.Models
     {
         [JsonProperty("keyword")]
         public string Text { get; set; }
+        [JsonProperty("confidence_score")]
         public double Confidence { get; set; }
     }
 }

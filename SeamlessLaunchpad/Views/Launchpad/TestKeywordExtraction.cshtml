@@ -1,0 +1,6 @@
+﻿@model List<StartupKeywords>
+
+@foreach (StartupKeywords key in Model)
+{
+    <div>@key.StartupName: @key.Keywords</div>
+}

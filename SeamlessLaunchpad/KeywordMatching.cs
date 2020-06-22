@@ -151,18 +151,46 @@ namespace SeamlessLaunchpad
             return string.Join(",", alignedCompanies);
         }
 
-        public async void SetupKeywords(List<StartupContainer> startups)
+        public static async Task<List<StartupKeywords>> SetupKeywords(List<StartupContainer> startups, SLPADDBContext context)
         {
+            List<StartupKeywords> lsk = new List<StartupKeywords>();
             foreach (StartupContainer s in startups)
             {
-                List<Keyword> keywords = (await Utilities.GetApiResponse<KeywordApiResponse>("v4", "keywords", "https://apis.paralleldots.com", "api_key", keywordApiKey, "text", Uri.EscapeDataString(s.Fields.CompanySummary))).FirstOrDefault().Keywords;
-                break;
+                try
+                {
+                    List<Keyword> keywords = (await Utilities.PostApiResponse<KeywordApiResponse>("v4", "keywords", "https://apis.paralleldots.com", "api_key", keywordApiKey, "text", Uri.EscapeDataString(s.Fields.CompanySummary))).FirstOrDefault().Keywords;
+
+                    List<string> words = new List<string>();
+                    keywords.ForEach(x => words.Add(x.Text));
+
+                    StartupKeywords sk = new StartupKeywords { Keywords = string.Join(',', words.ToArray()), StartupName = s.Fields.CompanyName };
+
+                    lsk.Add(sk);
+                    context.StartupKeywords.Add(sk);
+
+                    await context.SaveChangesAsync();
+                }
+                catch
+                {
+
+                }
+
+                await Task.Delay(1000); //to avoid getting rate-limited by the api
             }
+            return lsk;
         }
-        public async Task<List<Keyword>> GetKeywords(StartupContainer startup)
+
+        public static async Task<List<Keyword>> GetKeywords(StartupContainer startup)
         {
-            List<Keyword> keywords = (await Utilities.GetApiResponse<KeywordApiResponse>("v4", "keywords", "https://apis.paralleldots.com", "api_key", keywordApiKey, "text", Uri.EscapeDataString(startup.Fields.CompanySummary))).FirstOrDefault().Keywords;
-            return keywords;
+            KeywordApiResponse keywords = (
+                await Utilities.PostApiResponse<KeywordApiResponse>(
+                    "v4",
+                    "keywords",
+                    "https://apis.paralleldots.com",
+                    "api_key", keywordApiKey,
+                    "text", startup.Fields.CompanySummary))
+                    .FirstOrDefault();
+            return keywords.Keywords;
         }
     }
 }

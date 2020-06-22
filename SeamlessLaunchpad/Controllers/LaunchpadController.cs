@@ -697,6 +697,11 @@ namespace SeamlessLaunchpad.Controllers
             return topResults;
         }
 
-
+        public async Task<IActionResult> TestKeywordExtraction()
+        {
+            List<StartupContainer> sc = (await Utilities.GetApiResponse<StartupListRootObject>("v0/appFo187B73tuYhyg", "Master List", "https://api.airtable.com", "api_key", ApiKey)).FirstOrDefault().Records;
+            List<StartupKeywords> lsk = await KeywordMatching.SetupKeywords(sc, _context);
+            return View(lsk);
+        }
     }
 }
