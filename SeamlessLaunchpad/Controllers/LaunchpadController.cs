@@ -35,14 +35,19 @@ namespace SeamlessLaunchpad.Controllers
 
         // Gets first value in sequence or returns null
         [Authorize]
-        public IActionResult Index()
+        public async Task<IActionResult> Index()
         {
+            StartupListRootObject startupList = (await Utilities.GetApiResponse<StartupListRootObject>("v0/appFo187B73tuYhyg", "Master List", "https://api.airtable.com", "api_key", ApiKey)).FirstOrDefault();
+            FeedbackListRootObject feedbackList = (await Utilities.GetApiResponse<FeedbackListRootObject>("v0/appFo187B73tuYhyg", "Feedback", "https://api.airtable.com", "api_key", ApiKey)).FirstOrDefault();
+            ViewBag.StartupList = startupList.Records;
+            ViewBag.FeedbackList = feedbackList.Records;
             //old cold pulling form airtable
             //StartupListRootObject returnValue = (await Utilities.GetApiResponse<StartupListRootObject>("v0/appFo187B73tuYhyg", "Master List", "https://api.airtable.com", "api_key", ApiKey)).FirstOrDefault();
             //return View(returnValue.Records);
             string id = User.FindFirst(ClaimTypes.NameIdentifier).Value;
             var thisUser = _context.AspNetUsers.FirstOrDefault(x => x.Id == id);
             return View(thisUser);
+
 
         }
 
@@ -62,11 +67,8 @@ namespace SeamlessLaunchpad.Controllers
             return View();
         }
 
-
- 
-        
         [HttpGet]
-        public IActionResult AddStartup(string name, string summary, string thegoodlife = "", string healthbeyondthehotpital = "",
+        public IActionResult AddStartup(string name, string summary, int teamscore, int uniqueness, string thegoodlife = "", string healthbeyondthehotpital = "",
             string robustfuture = "", string convenienceandproductivity = "", string softwareai = "", string sensing = "",
             string robotics = "", string products = "", string advancedmaterials = "", string businessprocess = "",
             string city = "", string country = "", string dateadded = "")
@@ -81,6 +83,8 @@ namespace SeamlessLaunchpad.Controllers
             startupToAdd.Summary = summary;
             startupToAdd.City = city;
             startupToAdd.Country = country;
+            startupToAdd.TeamScore = teamscore;
+            startupToAdd.UniqueScore = uniqueness;
             string themes = "";
 
             if (thegoodlife != "")
@@ -340,10 +344,25 @@ namespace SeamlessLaunchpad.Controllers
                 }
                 
                 List<KeyValuePair<int, int>> orderedStartupFavoriteCount = startupFavoriteCount.ToList().OrderBy(x => x.Value).Reverse().ToList();
+
                 List<KeyValuePair<int, int>> orderedStartupCommentCount = startupCommentCount.ToList().OrderBy(x => x.Value).Reverse().ToList();
-            
-                FavoritesViewModel view = new FavoritesViewModel()
+
+
+                ViewBag.Prediction = new List<int>();
+                foreach (var startup in startups)
                 {
+                    if (startup.TeamScore == null || startup.UniqueScore == null)
+                    {
+                        ViewBag.Prediction.Add(0);
+                        continue;
+                    }
+                    int prediction = NewStartupPredictor((int)startup.TeamScore, (int)startup.UniqueScore);
+
+                    ViewBag.Prediction.Add(prediction);
+                }
+
+
+                FavoritesViewModel view = new FavoritesViewModel() {
                     StartupsToReview = startups,
                     FavoriteStartups = favoriteStartups,
                     UserAssociation = thisUser.Association,
@@ -559,7 +578,7 @@ namespace SeamlessLaunchpad.Controllers
             var thisUser = _context.AspNetUsers.FirstOrDefault(x => x.Id == userId);
             //INSERT call to Mike's code here, MAYBE, that COULD return similar startups from the API and write them to a list of our Startup model 
             //OR we could add a list of API startup model to the viewmodel class, filter by what Mike's code returns, and pass that on...
-            //INSERT call to Jess's code here, that will return an int for successViewStartupFavorite view = new ViewStartupFavorite() {
+            //INSERT call to Jesse's code here, that will return an int for successViewStartupFavorite view = new ViewStartupFavorite() {
 
             List<PredictedApiStartup> topMatching = await CompareSuccess(id);
 
@@ -731,14 +750,59 @@ namespace SeamlessLaunchpad.Controllers
                 }
             }
 
-
-            //    Dictionary<ApiStartup, int> kvp = new Dictionary<ApiStartup, int>();
-
-            //foreach (StartupContainer l1 in startupList.Records)
-            //{
-            //   kvp.Add(l1.Fields, SuccessPredictor.PredictSuccess(l1.Fields, feedbackList.Records.Where(x => x.Fields.Startup.Equals(l1.Fields.CompanyName)).ToList()));
-            //}
             return topResults;
+        }
+
+        public int NewStartupPredictor(int teamScore, int uniqueness)
+        {
+           int teamSuccess = 0; 
+            if (teamScore == 5)
+            {
+                teamSuccess = 5;
+            }
+            else if (teamScore == 4)
+            {
+                teamSuccess = 4;
+            }
+            else if (teamScore == 3)
+            {
+                teamSuccess = 3;
+            }
+            else if (teamScore == 2)
+            {
+                teamSuccess = 2; 
+            }
+            else if (teamScore == 1)
+            {
+                teamSuccess = 1;
+            }
+
+
+            int Uni = 0;
+            if (uniqueness == 5)
+            {
+                Uni = 5;
+            }
+            else if (uniqueness == 4)
+            {
+                Uni = 4;
+            }
+            else if (uniqueness == 3)
+            {
+                Uni = 3;
+            }
+            else if (uniqueness == 2)
+            {
+                Uni = 2;
+            }
+            else if (uniqueness == 1)
+            {
+                Uni = 1; 
+            }
+
+            int newScore = (Uni + teamSuccess) / 2;
+            return newScore;
+
         }
 
 

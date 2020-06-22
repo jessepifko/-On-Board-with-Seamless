@@ -1,21 +1,37 @@
-﻿@*@model List<StartupContainer>*@
-@model AspNetUsers
+﻿@{ 
+
+    List<FeedbackContainer> feedbacks = ViewBag.FeedbackList;
+}
 
 
  
+    <div>
+        <h3>Forecast</h3>
+    </div>
+<table class="table">
+    @foreach (StartupContainer startup in ViewBag.StartupList)
+    {
+        <tr>
+            <th>Seamless Company </th>
+            <th>Success Rating</th> 
+            
+        </tr>
+      
+        <tr>
+            <td>@startup.Fields.CompanyName</td>
+            <td align="justify">
+                @SuccessPredictor.PredictSuccess(startup.Fields, feedbacks.Where(x => x.Fields.Startup.Equals(startup.Fields.CompanyName)).ToList());
+                @if (SuccessPredictor.PredictSuccess(startup.Fields, feedbacks.Where(x => x.Fields.Startup.Equals(startup.Fields.CompanyName)).ToList()) >= 6)
+                {
+                    <img src="~/creativboard-converted-01-.jpg" width="60" height="35" />
+                }
+            </td>
+        </tr>
 
-<h3>Welcome @Model.UserName from @Model.Association</h3>
-
-<a href ="\Launchpad\AddStartup">Add a Startup</a>
-
-<a href ="\Launchpad\ViewDashboard">View Dashboard</a>
+    }
+</table>
 
 
 
-
-@*@foreach  (StartupContainer startup in Model)
-{
-    @startup.Fields.CompanyName
-}*@
 
 

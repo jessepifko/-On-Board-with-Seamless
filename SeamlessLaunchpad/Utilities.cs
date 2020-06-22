@@ -45,13 +45,15 @@ namespace SeamlessLaunchpad
         /// <param name="options">A list of options to send to the endpoint</param>
         /// <typeparam name="T">The model to deserialize into</typeparam>
         /// <returns>A populated model with the data that the api returned</returns>
+        /// 
+        //Takes in a type (LIST<T> ) 
         public static async Task<List<T>> GetApiResponse<T>(string controller, string action, string baseUrl,
             params KeyValuePair<string, string>[] options) where T : new()
-        {
+        {//API END POINTS
             string url = $"{baseUrl}/" +
                          $"{controller}/" +
                          $"{Uri.EscapeDataString(action)}";
-
+            //API ARGUMENTS (api key or anything else)
             bool first = true;
             foreach (KeyValuePair<string, string> argument in options)
             {
@@ -59,7 +61,7 @@ namespace SeamlessLaunchpad
                 url += $"{argument.Key}={Uri.EscapeDataString(argument.Value)}";
                 first = false;
             }
-
+            //Web request
             HttpWebRequest request = WebRequest.CreateHttp(url);
             HttpWebResponse response;
             try
@@ -78,7 +80,7 @@ namespace SeamlessLaunchpad
             }
             
             StreamReader rd = new StreamReader(s);
-
+           //ASSUMES ITS A LIST AND RETURNS A LIST WITH THAT OBJECT IN IT
             string output = await rd.ReadToEndAsync();
             List<T> ret;
             try
