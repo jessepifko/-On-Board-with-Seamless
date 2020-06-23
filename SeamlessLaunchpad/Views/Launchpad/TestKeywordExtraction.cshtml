@@ -1,6 +1,6 @@
-﻿@model List<StartupKeywords>
+﻿@model List<KeyValuePair<string, double>>
 
-@foreach (StartupKeywords key in Model)
+@foreach (KeyValuePair<string, double> kvp in Model)
 {
-    <div>@key.StartupName: @key.Keywords</div>
+    <div>@kvp.Key: @kvp.Value</div>
 }
