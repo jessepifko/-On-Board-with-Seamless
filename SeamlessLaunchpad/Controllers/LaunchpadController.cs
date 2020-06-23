@@ -22,6 +22,7 @@ namespace SeamlessLaunchpad.Controllers
         private readonly SLPADDBContext _context;
         private static readonly string ApiKey;
         private static readonly string NewsApiKey;
+        private static readonly string RedlineApiKey;
 
         public LaunchpadController(SLPADDBContext context)
         {
@@ -30,13 +31,16 @@ namespace SeamlessLaunchpad.Controllers
 
         static LaunchpadController()
         {
-            var keyStream = new StreamReader(System.IO.File.OpenRead("api.txt"));
-            ApiKey = keyStream.ReadToEnd().Trim('\n');
+            ApiKey = secret.apiKey;
+        //    var keyStream = new StreamReader(System.IO.File.OpenRead("api.txt"));
+        //    ApiKey = keyStream.ReadToEnd().Trim('\n');
             
-            var newsKeyStream = new StreamReader(System.IO.File.OpenRead("newsapi.txt"));
-            NewsApiKey = newsKeyStream.ReadToEnd().Trim('\n');
-            keyStream.Close();
-            
+        //    var newsKeyStream = new StreamReader(System.IO.File.OpenRead("newsapi.txt"));
+            NewsApiKey = secret.newsApiKey;
+            //    keyStream.Close();
+
+          RedlineApiKey = secret.redLineApiKey;
+
         }
 
         // Gets first value in sequence or returns null
@@ -568,7 +572,7 @@ namespace SeamlessLaunchpad.Controllers
         }
 
         [Authorize]
-        public async Task<IActionResult> ViewSingle(int id)
+        public async Task<IActionResult> ViewSingle(int id, double distance = 0.0D )
         {
             string userId = User.FindFirst(ClaimTypes.NameIdentifier).Value;
             var thisUser = _context.AspNetUsers.FirstOrDefault(x => x.Id == userId);
@@ -609,6 +613,8 @@ namespace SeamlessLaunchpad.Controllers
                 Articles = articles
                                                            
             };
+
+            ViewBag.Distance = distance;
 
             return View(view);
         }
@@ -818,5 +824,27 @@ namespace SeamlessLaunchpad.Controllers
             return newScore;
 
         }
+<<<<<<< HEAD
+=======
+
+        public async Task<IActionResult> TestKeywordExtraction()
+        {
+            List<StartupContainer> sc = (await Utilities.GetApiResponse<StartupListRootObject>("v0/appFo187B73tuYhyg", "Master List", "https://api.airtable.com", "api_key", ApiKey)).FirstOrDefault().Records;
+            List<StartupKeywords> lsk = await KeywordMatching.SetupKeywords(sc, _context);
+            return View(lsk);
+        }
+
+        public async Task<IActionResult> Distance(int id, int startzip, int endzip)
+        {
+            DistanceModel dis = (await Utilities.GetApiResponse<DistanceModel>($"rest/distance.json/{startzip:D5}/{endzip:D5}", "mile", "https://redline-redline-zipcode.p.rapidapi.com", "rapidapi-key", RedlineApiKey)).FirstOrDefault();
+
+            if (dis != null )
+            {
+                ViewBag.Distance = dis.Distance;
+            }
+            return RedirectToAction("ViewSingle", new { id = id, distance = dis.Distance});
+        }
+
+>>>>>>> b7a749d892ac80b347287d1bf7a3f0959066324a
     }
 }

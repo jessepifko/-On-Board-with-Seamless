@@ -25,6 +25,7 @@ namespace SeamlessLaunchpad.Models
         public string Status { get; set; }
         public int? TeamScore { get; set; }
         public int? UniqueScore { get; set; }
+        public int? Zip { get; set; }
 
         public virtual ICollection<Comment> Comment { get; set; }
         public virtual ICollection<Favorites> Favorites { get; set; }

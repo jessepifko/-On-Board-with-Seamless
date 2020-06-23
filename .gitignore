@@ -5,8 +5,6 @@ bin/
 obj/
 secret.txt
 api.txt
-<<<<<<< HEAD
+secret.cs
 newsapi.txt
-=======
 keywordapi.txt
->>>>>>> mike
