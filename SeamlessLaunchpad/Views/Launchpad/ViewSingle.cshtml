@@ -73,25 +73,20 @@
         </tr>
 
     </table>
-    <h3>Predicted Performance</h3>
-    <h4>Top 3 predicted successful startups in matching tech fields:</h4>
-    <table class="table">
-        <tr>
-            <th>Name</th>
-            <th>Summary</th>
-            <th>Score</th>
-        </tr>
+    <h3>Distance Away</h3>
+    <p>Type your ZipCode to find out distance to @Model.SingleStartupToView.Name </p>
+   <form action="/Launchpad/Distance" method="GET">
+       <input type="hidden" name="Id" value="@Model.SingleStartupToView.Id" />
+       <input type="hidden" name="StartZip" value="@Model.SingleStartupToView.Zip" />
+       <input type="number" name="EndZip" placeholder="Zip" />
+       <input type="submit" name="Submit"  />
+   </form>
+       @if (ViewBag.Distance != 0)
+    {
+    <p>Distance to @Model.SingleStartupToView.Name roughly @ViewBag.Distance away.</p>
+    }
 
-        @foreach (var p in Model.MatchingPredictedStartups)
-        {
-            <tr>
-                <td>@p.CompanyName</td>
-                <td>@p.CompanySummary</td>
-                <td>@p.PredictedRating</td>
-            </tr>
-        }
-
-    </table>
+  
     <h3>News and Trends</h3>
     <h5>Top 5 Search Results for @Model.SingleStartupToView.Name:</h5>
     <table class="table">
