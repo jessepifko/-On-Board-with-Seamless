@@ -3,167 +3,265 @@
     ViewData["Title"] = "ViewSingle";
 }
 
+<head>
+<link rel="stylesheet" type="text/css" src="/css/singleView.css">
+</head>
+
 @model SeamlessLaunchpad.ViewModel.FavoritesViewModel
-<h1>Prospective Startup:</h1>
-@{ 
+<h3>Prospective Startup:</h3>
+@{
     bool fav = false;
-    foreach(var f in Model.FavoriteStartups)
+    foreach (var f in Model.FavoriteStartups)
     {
-        if(f.StartupId == Model.SingleStartupToView.Id)
+        if (f.StartupId == Model.SingleStartupToView.Id)
         {
             fav = true;
         }
     }
-} 
+}
 
-<div>
-    <table class="table">
-        <tr>
-            <td>Company Name:</td>
-            <td>@Model.SingleStartupToView.Name</td>
-            <td>Date Added:</td>
-            <td>@Model.SingleStartupToView.DateAdded</td>
-        </tr>
-        <tr>
-            <td>Theme:</td>
-            <td>@Model.SingleStartupToView.Theme</td>
-            <td>Tech Area:</td>
-            <td>@Model.SingleStartupToView.TechArea</td>
-        </tr>
-        <tr>
-            <td>City:</td>
-            <td>@Model.SingleStartupToView.City</td>
-            <td>Country:</td>
-            <td>@Model.SingleStartupToView.Country</td>
-        </tr>
+<div class="container-fluid">
 
-    </table>
-    <table class="table">
-        <tr>
-            <td>Summary:</td>
-            <td>@Model.SingleStartupToView.Summary</td>
-        </tr>
-        <tr>
-            <td>Interested Partners:</td>
-            <td>
-                @Model.SingleStartupToView.InterestedPartners
-                @if (Model.SingleStartupToView.InterestedPartners != null && Model.SingleStartupToView.InterestedPartners.Contains(Model.UserAssociation))
-                {
-                    <a href="/Launchpad/RemoveInterest?id=@Model.SingleStartupToView.Id">Remove @Model.UserAssociation as Interested</a>
-                }
-                else
-                {
-                    <a href="/Launchpad/AddInterest?id=@Model.SingleStartupToView.Id">Add @Model.UserAssociation as Interested</a>
-                }
-            </td>
+    <div class="container-fluid infoBlock">
+        <div class="row">
+            <div class="col-auto">
+                <p class="font-weight-bold">COMPANY NAME:</p>
+            </div>
+            <div class="col-auto">
+                <p class="font-italic">@Model.SingleStartupToView.Name</p>
+            </div>
+            <div class="col-auto">
+                <p class="font-weight-bold">DATE ADDED:</p>
+            </div>
+            <div class="col-auto">
+                <p>@Model.SingleStartupToView.DateAdded</p>
+            </div>
+            <div class="col-auto">
+                <p class="font-weight-bold">FAVORITED:</p>
+            </div>
+            <div class="col-auto">
 
-        </tr>
-        <tr>
-            <td>Watched as Favorite?</td>
-            <td>
                 @if (fav)
                 {
-                    <p>Yes. <a href="/Launchpad/RemoveFavorite?id=@Model.SingleStartupToView.Id">Click to remove</a></p>
+                    <p>Yes. <a href="/Launchpad/RemoveFavorite?id=@Model.SingleStartupToView.Id">Remove?</a></p>
                 }
                 else
                 {
-                    <a href="/Launchpad/AddFavorite?id=@Model.SingleStartupToView.Id">Click to watch as Favorite</a>
+                    <p>No. <a href="/Launchpad/AddFavorite?id=@Model.SingleStartupToView.Id">Add?</a></p>
                 }
-            </td>
-        </tr>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-auto">
+                <p class="font-weight-bold">THEMES:</p>
+            </div>
+            <div class="col-auto">
+                <p>@Model.SingleStartupToView.Theme</p>
+            </div>
+            <div class="col-auto">
+                <p class="font-weight-bold">TECH AREAS:</p>
+            </div>
+            <div class="col-auto">
+                <p>@Model.SingleStartupToView.TechArea</p>
+            </div>
+            <div class="col-auto">
+                <p class="font-weight-bold">UNIQUENESS:</p>
+            </div>
+            <div class="col-auto">
+                <p>@Model.SingleStartupToView.UniqueScore</p>
+            </div>
+            <div class="col-auto">
+                <p class="font-weight-bold">TEAM STRENGTH:</p>
+            </div>
+            <div class="col-auto">
+                <p>@Model.SingleStartupToView.TeamScore</p>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-auto">
+                <p class="font-weight-bold">CITY:</p>
+            </div>
+            <div class="col-auto">
+                <p>@Model.SingleStartupToView.City</p>
+            </div>
+            <div class="col-auto">
+                <p class="font-weight-bold">COUNTRY:</p>
+            </div>
+            <div class="col-auto">
+                <p>@Model.SingleStartupToView.Country</p>
+            </div>
+            <div class="col-auto">
+                <p class="font-weight-bold">ZIP:</p>
+            </div>
+            <div class="col-auto">
+                <p>@Model.SingleStartupToView.Zip</p>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-auto">
+                <p class="font-weight-bold">SUMMARY:</p>
+            </div>
+            <div class="col-lg">
+                <p>@Model.SingleStartupToView.Summary</p>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-auto">
+                <p class="font-weight-bold">PARTNER ASSOCIATIONS:</p>
+            </div>
+            <div class="col-auto">
+                <p>@Model.SingleStartupToView.InterestedPartners</p>
+            </div>
+            <div class="col-auto">
+                <p>
+                    @if (Model.SingleStartupToView.InterestedPartners != null && Model.SingleStartupToView.InterestedPartners.Contains(Model.UserAssociation))
+                    {
+                        <a href="/Launchpad/RemoveInterest?id=@Model.SingleStartupToView.Id">Remove @Model.UserAssociation as Interested</a>
+                    }
+                    else
+                    {
+                        <a href="/Launchpad/AddInterest?id=@Model.SingleStartupToView.Id">Add @Model.UserAssociation as Interested</a>
+                    }
+                </p>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-auto">
+                <p class="font-weight-bold">ESTIMATED DISTANCE:</p>
+            </div>
+            <div class="col-auto">
+                @if (ViewBag.Distance != 0)
+                {
+                    <p>Distance to @Model.SingleStartupToView.Name: roughly @ViewBag.Distance miles away.</p>
+                }
+            </div>
+            <div class="col-auto">
+                <form action="/Launchpad/Distance" method="GET">
+                    <input type="hidden" name="Id" value="@Model.SingleStartupToView.Id" />
+                    <input type="hidden" name="StartZip" value="@Model.SingleStartupToView.Zip" />
+                    <input type="number" name="EndZip" placeholder="Zip" />
+                    <input type="submit" name="Submit" />
+                </form>
+            </div>
+        </div>
+    </div>
 
-    </table>
-    <h3>Distance Away</h3>
-    <p>Type your ZipCode to find out distance to @Model.SingleStartupToView.Name </p>
-   <form action="/Launchpad/Distance" method="GET">
-       <input type="hidden" name="Id" value="@Model.SingleStartupToView.Id" />
-       <input type="hidden" name="StartZip" value="@Model.SingleStartupToView.Zip" />
-       <input type="number" name="EndZip" placeholder="Zip" />
-       <input type="submit" class="btn btn-primary" name="Submit"  />
-   </form>
-       @if (ViewBag.Distance != 0)
-    {
-    <p>Distance to @Model.SingleStartupToView.Name roughly @ViewBag.Distance away.</p>
-    }
+    <h3>Comments:</h3>
+    <div class="container-fluid infoBlock">
+        <div class="row">
+            <div class="col-auto">
+                <p class="font-weight-bold">PRIVATE COMMENTS:</p>
+            </div>
+            <div class="col-auto">
+                <p><a href="/Launchpad/AddExclusiveComment?id=@Model.SingleStartupToView.Id">Add a comment visible only by @Model.UserAssociation members</a></p>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-2">
+                <p class="font-weight-bold">User</p>
+                @foreach (Comment c in Model.ExclusiveComments)
+                {
+                    <p>@c.UserName</p>
+                }
+            </div>
+            <div class="col-sm-2">
+                <p class="font-weight-bold">
+                    Association</pclass="font-weight-bold">
+                    @foreach (Comment c in Model.ExclusiveComments)
+                    {
+                    <p>@c.Association</p>
+                }
+                </div>
+                <div class="col-lg">
+                    <p class="font-weight-bold">Comment</p>
+                    @foreach (Comment c in Model.ExclusiveComments)
+                    {
+                        <p>@c.Comment1</p>
+                    }
+                </div>
+                <div class="col-sm-2">
+                    <p class="font-weight-bold">Date</p>
+                    @foreach (Comment c in Model.ExclusiveComments)
+                    {
+                        <p>@c.CommentDate</p>
+                    }
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-auto">
+                    <p class="font-weight-bold">PUBLIC COMMENTS:</p>
+                </div>
+                <div class="col-auto">
+                    <p><a href="/Launchpad/AddComment?id=@Model.SingleStartupToView.Id">Add a comment visible to all Seamless Partners</a></p>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-sm-2">
+                    <p class="font-weight-bold">User</p>
+                    @foreach (Comment c in Model.Comments)
+                    {
+                        <p>@c.UserName</p>
+                    }
+                </div>
+                <div class="col-sm-2">
+                    <p class="font-weight-bold">
+                        Association</pclass="font-weight-bold">
+                        @foreach (Comment c in Model.Comments)
+                        {
+                        <p>@c.Association</p>
+                    }
+                    </div>
+                    <div class="col-lg">
+                        <p class="font-weight-bold">Comment</p>
+                        @foreach (Comment c in Model.Comments)
+                        {
+                            <p>@c.Comment1</p>
+                        }
+                    </div>
+                    <div class="col-sm-2">
+                        <p class="font-weight-bold">Date</p>
+                        @foreach (Comment c in Model.Comments)
+                        {
+                            <p>@c.CommentDate</p>
+                        }
+                    </div>
+                </div>
+            </div>
+            <h3>News:</h3>
+            <div class="container-fluid infoBlock">
+                <div class="row">
+                    <div class="col-auto">
+                        <p class="font-weight-bold">TOP 5 NEWS HITS:</p>
+                    </div>
+                </div>
+                @foreach (var article in Model.Articles)
+                {
+                    <div class="row">
+                        <div class="col-auto">
+                            <p>@article.source.name</p>
+                        </div>
+                        <div class="col-auto">
+                            <p><a href="@article.url" target="_blank">@article.title</a></p>
+                        </div>
+                        <div class="col-auto">
+                            <p>@article.publishedAt.Date</p>
+                        </div>
+                    </div>
+                }
 
-  
-    <h3>News and Trends</h3>
-    <h5>Top 5 Search Results for @Model.SingleStartupToView.Name:</h5>
-    <table class="table">
-        @foreach(var article in Model.Articles)
-        {
-            <tr>
-                <td><a href ="@article.url" target="_blank" >@article.title</a></td>
-                <td>@article.publishedAt</td>
-            </tr>
-            <tr>
-                <td><img src="@article.urlToImage" style="width:20%; height:20%"  /></td>
-                <td>@article.description</td>
-            </tr>
-        }
-            
-    </table>
-
-    <h3>Comments</h3>
-    <h4>Seamless Member Comments</h4>
-    @if (Model.Comments.Count == 0)
-    {
-        <p>No comments found</p>
-    }
-    else
-    {
-        <table>
-            <tr>
-                <th>User</th>
-                <th>Association</th>
-                <th>Comment</th>
-                <th>Date</th>
-            </tr>
-            @foreach (Comment c in Model.Comments)
-            {
-                <tr>
-                    <td>@c.UserName</td>
-                    <td>@c.Association</td>
-                    <td>@c.Comment1</td>
-                    <td>@c.CommentDate</td>
-                </tr>
-            }
-        </table>
-    }
-    <a href="/Launchpad/AddComment?id=@Model.SingleStartupToView.Id">Add a comment</a>
-
-    <h4>@Model.UserAssociation only Comments</h4>
-    @if (Model.ExclusiveComments.Count == 0)
-    {
-        <p>No comments found</p>
-    }
-    else
-    {
-        <table>
-            <tr>
-                <th>User</th>
-                <th>Comment</th>
-                <th>Date</th>
-            </tr>
-            @foreach (Comment c in Model.ExclusiveComments)
-            {
-                <tr>
-                    <td>@c.UserName</td>
-                    <td>@c.Comment1</td>
-                    <td>@c.CommentDate</td>
-                </tr>
-            }
-        </table>
-    }
-    <a href="/Launchpad/AddExclusiveComment?id=@Model.SingleStartupToView.Id">Add a comment visible only by @Model.UserAssociation members.</a>
-
-
-    <p>Google Search Rank:</p>
-    <h3>Predicted Alignment Within Seamless:</h3>
-    <p>Mike's Magic Sauce Here</p>
-    <h3>Potential Overlap with Existing Startups:</h3>
-    <p>Mike's Other Magic Sauce Here</p>
-
-    <h3>Remove from Onboarding Dashboard</h3>
-    <a href="/Launchpad/RemoveStartup/?id=@Model.SingleStartupToView.Id">Remove this startup from the Launchpad Dashboard</a>
+            </div>
+            <h3>Remove:</h3>
+            <div class="container-fluid infoBlock">
+                <div class="row">
+                    <div class="col-auto">
+                        <p class="font-weight-bold">REMOVE STARTUP FROM DASHBOARD:</p>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-auto">
+                        <p><a href="/Launchpad/RemoveStartup/?id=@Model.SingleStartupToView.Id">Remove this startup from the Launchpad Dashboard</a></p>
+                    </div>
+                </div>
+            </div>
+        </div>
 </div>

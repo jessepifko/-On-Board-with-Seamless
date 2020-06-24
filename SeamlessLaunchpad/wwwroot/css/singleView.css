@@ -1,0 +1,15 @@
+﻿/* Please see documentation at https://docs.microsoft.com/aspnet/core/client-side/bundling-and-minification
+for details on configuring this project to bundle and minify static web assets. */
+
+
+.infoBlock{
+  background-color: #e8f9fd;
+  box-shadow;
+  margin-bottom: 30px;
+  min-width: 80px;
+}
+
+h3{
+    color: #FF1e00;
+    text-shadow:3px 2px 1px #c8c8c8;
+}
