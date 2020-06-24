@@ -1,10 +1,13 @@
-﻿
+﻿<head>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js">
+    </script>
+    <link rel="stylesheet" type="text/css" src="/css/navbar.css" />
+</head>
 @{
     ViewData["Title"] = "ViewDashboard";
 }
 
 @model SeamlessLaunchpad.ViewModel.FavoritesViewModel
-
 
 <h3>ViewDashboard</h3>
 
@@ -22,48 +25,55 @@
 <br />
 Filter startups:
 <br />
+
 <form action="/Launchpad/ViewDashboard" method="get">
     <input type="hidden" name="favOnly" value="no" />
-    <div name="themes">
-        Tech Area:
-        <input type="checkbox" id="thegoodlife" name="thegoodlife" value="The Good Life" @(ViewBag.TheGoodLife != null ? "checked" : "")>
-        <label for="thegoodlife">The Good Life</label>
-        <input type="checkbox" id="healthbeyondthehotpital" name="healthbeyondthehospital" value="Health Beyond the Hospital" @(ViewBag.HealthBeyondTheHospital != null ? "checked" : "")>
-        <label for="healthbeyondthehotpital">Health Beyond the Hospital</label>
-        <input type="checkbox" id="robustfuture" name="robustfuture" value="Robust Future" @(ViewBag.RobustFuture != null ? "checked" : "")>
-        <label for="robustfuture">Robust Future</label>
-        <input type="checkbox" id="convenienceandproductivity" name="convenienceproductivity" value="Convenience & Productivity" @(ViewBag.ConvenienceProductivity != null ? "checked" : "")>
-        <label for="convenienceandproductivity">Convenience & Productivity</label>
+    Theme(s):
+    <div class="form-check-inline" name="themes">
+        <input type="checkbox" class="form-check-input" id="thegoodlife" name="thegoodlife" value="The Good Life" @(ViewBag.TheGoodLife != null ? "checked" : "")>
+        <label class="form-check-label" style="padding-right: 0.25em;" for="thegoodlife">The Good Life</label>
+        <input type="checkbox" class="form-check-input" id="healthbeyondthehotpital" name="healthbeyondthehospital" value="Health Beyond the Hospital" @(ViewBag.HealthBeyondTheHospital != null ? "checked" : "")>
+        <label class="form-check-label" style="padding-right: 0.25em;" for="healthbeyondthehotpital">Health Beyond the Hospital</label>
+        <input type="checkbox" class="form-check-input" id="robustfuture" name="robustfuture" value="Robust Future" @(ViewBag.RobustFuture != null ? "checked" : "")>
+        <label class="form-check-label" style="padding-right: 0.25em;" for="robustfuture">Robust Future</label>
+        <input type="checkbox" class="form-check-input" id="convenienceandproductivity" name="convenienceproductivity" value="Convenience & Productivity" @(ViewBag.ConvenienceProductivity != null ? "checked" : "")>
+        <label class="form-check-label" style="padding-right: 0.25em;" for="convenienceandproductivity">Convenience & Productivity</label>
+    </div><br />
+    Tech Area:
+    <div name="techarea" class="form-check-inline">
+        <input type="checkbox" class="form-check-input" id="softwareai" name="softwareai" value="Software / AI" @(ViewBag.SoftwareAI != null ? "checked" : "")>
+        <label class="form-check-label" style="padding-right: 0.25em;" for="softwareai">Software / AI</label>
+        <input type="checkbox" class="form-check-input" id="sensing" name="sensing" value="Sensing" @(ViewBag.Sensing != null ? "checked" : "")>
+        <label class="form-check-label" style="padding-right: 0.25em;" for="sensing">Sensing</label>
+        <input type="checkbox" class="form-check-input" id="robotics" name="robotics" value="Robotics" @(ViewBag.Robotics != null ? "checked" : "")>
+        <label class="form-check-label" style="padding-right: 0.25em;" for="robotics">Robotics</label>
+        <input type="checkbox" class="form-check-input" id="products" name="products" value="Products" @(ViewBag.Products != null ? "checked" : "")>
+        <label class="form-check-label" style="padding-right: 0.25em;" for="products">Products</label>
+        <input type="checkbox" class="form-check-input" id="advancedmaterials" name="advancedmaterials" value="Advanced Materials" @(ViewBag.AdvancedMaterials != null ? "checked" : "")>
+        <label class="form-check-label" style="padding-right: 0.25em;" for="advancedmaterials">Advanced Materials</label>
+        <input type="checkbox" class="form-check-input" id="businessprocess" name="businessprocess" value="Business Process" @(ViewBag.BusinessProcess != null ? "checked" : "")>
+        <label class="form-check-label" style="padding-right: 0.25em;" for="businessprocess">Business Process</label>
     </div>
-    <div name="techarea">
-        <input type="checkbox" id="softwareai" name="softwareai" value="Software / AI" @(ViewBag.SoftwareAI != null ? "checked" : "")>
-        <label for="softwareai">Software / AI</label>
-        <input type="checkbox" id="sensing" name="sensing" value="Sensing" @(ViewBag.Sensing != null ? "checked" : "")>
-        <label for="sensing">Sensing</label>
-        <input type="checkbox" id="robotics" name="robotics" value="Robotics" @(ViewBag.Robotics != null ? "checked" : "")>
-        <label for="robotics">Robotics</label>
-        <input type="checkbox" id="products" name="products" value="Products" @(ViewBag.Products != null ? "checked" : "")>
-        <label for="products">Products</label>
-        <input type="checkbox" id="advancedmaterials" name="advancedmaterials" value="Advanced Materials" @(ViewBag.AdvancedMaterials != null ? "checked" : "")>
-        <label for="advancedmaterials">Advanced Materials</label>
-        <input type="checkbox" id="businessprocess" name="businessprocess" value="Business Process" @(ViewBag.BusinessProcess != null ? "checked" : "")>
-        <label for="businessprocess">Business Process</label>
+    <div class="form-inline">
+        <input type="text" class="form-control mb-2 mr-sm-2" name="City" placeholder="City" @(!string.IsNullOrEmpty(ViewBag.City) ? $"value={ViewBag.City}" : "") /><br />
+        <input type="text" class="form-control mb-2 mr-sm-2" name="Country" placeholder="Country" @(!string.IsNullOrEmpty(ViewBag.Country) ? $"value={ViewBag.Country}" : "") /><br />
+        <input type="submit" class="btn btn-primary mb-2" value="Filter!" />
     </div>
-    <input type="text" name="City" placeholder="City" @(!string.IsNullOrEmpty(ViewBag.City) ? $"value={ViewBag.City}" : "") /><br />
-    <input type="text" name="Country" placeholder="Country" @(!string.IsNullOrEmpty(ViewBag.Country) ? $"value={ViewBag.Country}" : "") /><br />
-    <input type="text" placeholder="View name..." name="viewname" />
-    <input type="submit" formaction="/Launchpad/SaveView" value="Save this View" /><br/>
-</form><br/>
+    <div class="form-inline">
+        <input type="text" class="form-control mb-2 mr-sm-2" placeholder="View name..." name="viewname" />
+        <input type="submit" class="btn btn-primary mb-2" formaction="/Launchpad/SaveView" value="Save this View" /><br />
+    </div>
+</form><br />
 Select saved view:
-<form action="/Launchpad/GetSavedView" method="get">
-    <select name="selectedView">
-        <option value="">Choose...</option>
-        @foreach(UserView view in ViewBag.UserViews)
+<form action="/Launchpad/GetSavedView" class="form-inline" method="get">
+    <select class="custom-select my-1 mr-sm-2" name="selectedView">
+        <option selected>Choose...</option>
+        @foreach (UserView view in ViewBag.UserViews)
         {
             @Html.Raw($"<option value=\"{view.Id}\">{view.Name}</option>")
         }
     </select><br />
-    <input type="submit" value="Select View" />
+    <input type="submit" class="btn btn-primary my-1 mr-sm-2" value="Select View" />
 </form>
 <table class="table">
     <tr>
@@ -80,7 +90,7 @@ Select saved view:
         <th>Success Predictor</th>
     </tr>
     @for (int i = 0; i < Model.StartupsToReview.Count; i++)
-     {
+    {
 
         bool fav = false;
 
@@ -137,7 +147,7 @@ Select saved view:
                 }
             }
             <td>
-          
+
                 <p align="center">
                     @* @ViewBag.Prediction[i] *@
                     @if (@ViewBag.Prediction[i] >= 4)
@@ -146,7 +156,7 @@ Select saved view:
                     }
                 </p>
 
-           @* NEWSTARTUP RATING GOES HERE *@
+                @* NEWSTARTUP RATING GOES HERE *@
             </td>
         </tr>
 
