@@ -63,6 +63,10 @@ namespace SeamlessLaunchpad.Controllers
 
         }
 
+        public IActionResult ViewLandingPage()
+        {
+            return View(); 
+        }
 
         public async Task<IActionResult> Index2()
         {

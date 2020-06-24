@@ -6,30 +6,32 @@
 
  
     <div>
-        <h3>Forecast</h3>
+        <h3>The Forecast</h3>
     </div>
-<table class="table">
-    @foreach (StartupContainer startup in ViewBag.StartupList)
-    {
-        <tr>
-            <th>Seamless Company </th>
-            <th>Success Rating</th> 
-            
-        </tr>
-      
-        <tr>
-            <td>@startup.Fields.CompanyName</td>
-            <td align="justify">
-                @SuccessPredictor.PredictSuccess(startup.Fields, feedbacks.Where(x => x.Fields.Startup.Equals(startup.Fields.CompanyName)).ToList());
-                @if (SuccessPredictor.PredictSuccess(startup.Fields, feedbacks.Where(x => x.Fields.Startup.Equals(startup.Fields.CompanyName)).ToList()) >= 6)
-                {
-                    <img src="~/creativboard-converted-01-.jpg" width="60" height="35" />
-                }
-            </td>
-        </tr>
+    <div class="table-responsive">
+        <table class="table" class="table-dark">
+            @foreach (StartupContainer startup in ViewBag.StartupList)
+            {
+                <tr>
+                    <th>Seamless Company </th>
+                    <th>Success Rating</th>
 
-    }
-</table>
+                </tr>
+
+                <tr>
+                    <td>@startup.Fields.CompanyName</td>
+                    <td align="justify">
+                        @SuccessPredictor.PredictSuccess(startup.Fields, feedbacks.Where(x => x.Fields.Startup.Equals(startup.Fields.CompanyName)).ToList());
+                        @if (SuccessPredictor.PredictSuccess(startup.Fields, feedbacks.Where(x => x.Fields.Startup.Equals(startup.Fields.CompanyName)).ToList()) >= 6)
+                        {
+                            <img src="~/creativboard-converted-01-.jpg" width="60" height="35" />
+                        }
+                    </td>
+                </tr>
+
+            }
+        </table>
+    </div>
 
 
 

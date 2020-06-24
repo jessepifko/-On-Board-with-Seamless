@@ -8,8 +8,12 @@
 }
 
 @model SeamlessLaunchpad.ViewModel.FavoritesViewModel
-
+<<<<<<< HEAD
 <h3>ViewDashboard</h3>
+=======
+
+<h3>Dashboard</h3>
+>>>>>>> 4f2691f6aafe5ebdb23b0609bb5eebbe91e61f6d
 
 <a href="\Launchpad\AddStartup">Add a Startup</a>
 <h4>Hot Prospects:</h4>
@@ -63,7 +67,8 @@ Filter startups:
         <input type="text" class="form-control mb-2 mr-sm-2" placeholder="View name..." name="viewname" />
         <input type="submit" class="btn btn-primary mb-2" formaction="/Launchpad/SaveView" value="Save this View" /><br />
     </div>
-</form><br />
+</form>
+<br />
 Select saved view:
 <form action="/Launchpad/GetSavedView" class="form-inline" method="get">
     <select class="custom-select my-1 mr-sm-2" name="selectedView">
@@ -75,8 +80,13 @@ Select saved view:
     </select><br />
     <input type="submit" class="btn btn-primary my-1 mr-sm-2" value="Select View" />
 </form>
-<table class="table">
-    <tr>
+<div class="table-responsive">
+    <table class="align-self-sm-center">
+        <style>
+            td {
+                padding: 15px;
+            }
+        </style>
         <th>Name</th>
         <th>City</th>
         <th>Country</th>
@@ -88,78 +98,70 @@ Select saved view:
         <th>Favorited</th>
         <th>Commented</th>
         <th>Success Predictor</th>
-    </tr>
-    @for (int i = 0; i < Model.StartupsToReview.Count; i++)
-    {
-
-        bool fav = false;
-
-        @foreach (var f in Model.FavoriteStartups)
-        {
-            if (f.StartupId == Model.StartupsToReview[i].Id)
-            {
-                fav = true;
-            }
-        }
-        <tr>
-            <td><a href="/Launchpad/ViewSingle?id=@Model.StartupsToReview[i].Id">@Model.StartupsToReview[i].Name</a></td>
-            <td>@Model.StartupsToReview[i].City</td>
-            <td>@Model.StartupsToReview[i].Country</td>
-            <td>@Model.StartupsToReview[i].Summary</td>
-            <td>@Model.StartupsToReview[i].Theme</td>
-            <td>@Model.StartupsToReview[i].TechArea</td>
-            <td>@Model.StartupsToReview[i].DateAdded</td>
-            <td>@Model.StartupsToReview[i].InterestedPartners</td>
-            @if (fav)
-            {
-                int favoriteCountExcludingYou = Model.FavoriteCount.FirstOrDefault(x => x.Key == Model.StartupsToReview[i].Id).Value - 1;
-                if (favoriteCountExcludingYou == 0)
-                {
-                    <td>You</td>
-                }
-                else
-                {
-                    <td>@favoriteCountExcludingYou and You</td>
-                }
-
-            }
-            else
-            {
-                int favoriteCountExcludingYou = Model.FavoriteCount.FirstOrDefault(x => x.Key == Model.StartupsToReview[i].Id).Value;
-                if (favoriteCountExcludingYou == 0)
-                {
-                    <td>0</td>
-                }
-                else
-                {
-                    <td>@Model.FavoriteCount.FirstOrDefault(x => x.Key == Model.StartupsToReview[i].Id).Value</td>
-                }
-            }
-            @{
-                int commentCount = Model.CommentCount.FirstOrDefault(x => x.Key == Model.StartupsToReview[i].Id).Value;
-                if (commentCount == 0)
-                {
-                    <td></td>
-                }
-                else
-                {
-                    <td>@commentCount</td>
-                }
-            }
-            <td>
-
-                <p align="center">
-                    @* @ViewBag.Prediction[i] *@
-                    @if (@ViewBag.Prediction[i] >= 4)
-                    {
-                        <img src="~/creativboard-converted-01-.jpg" width="60" height="35" />
-                    }
-                </p>
-
-                @* NEWSTARTUP RATING GOES HERE *@
-            </td>
         </tr>
-
-    }
-</table>
-
+        @for (int i = 0; i < Model.StartupsToReview.Count; i++)
+        {
+            bool fav = false;
+            @foreach (var f in Model.FavoriteStartups)
+            {
+                if (f.StartupId == Model.StartupsToReview[i].Id)
+                {
+                    fav = true;
+                }
+            }
+            <tr>
+                <td><a href="/Launchpad/ViewSingle?id=@Model.StartupsToReview[i].Id">@Model.StartupsToReview[i].Name</a></td>
+                <td>@Model.StartupsToReview[i].City</td>
+                <td>@Model.StartupsToReview[i].Country</td>
+                <td>@Model.StartupsToReview[i].Summary</td>
+                <td>@Model.StartupsToReview[i].Theme</td>
+                <td>@Model.StartupsToReview[i].TechArea</td>
+                <td>@Model.StartupsToReview[i].DateAdded</td>
+                <td>@Model.StartupsToReview[i].InterestedPartners</td>
+                @if (fav)
+                {
+                    int favoriteCountExcludingYou = Model.FavoriteCount.FirstOrDefault(x => x.Key == Model.StartupsToReview[i].Id).Value - 1;
+                    if (favoriteCountExcludingYou == 0)
+                    {
+                        <td>You</td>
+                    }
+                    else
+                    {
+                        <td>@favoriteCountExcludingYou and You</td>
+                    }
+                }
+                else
+                {
+                    int favoriteCountExcludingYou = Model.FavoriteCount.FirstOrDefault(x => x.Key == Model.StartupsToReview[i].Id).Value;
+                    if (favoriteCountExcludingYou == 0)
+                    {
+                        <td>0</td>
+                    }
+                    else
+                    {
+                        <td>@Model.FavoriteCount.FirstOrDefault(x => x.Key == Model.StartupsToReview[i].Id).Value</td>
+                    }
+                }
+                @{
+                    int commentCount = Model.CommentCount.FirstOrDefault(x => x.Key == Model.StartupsToReview[i].Id).Value;
+                    if (commentCount == 0)
+                    {
+                        <td></td>
+                    }
+                    else
+                    {
+                        <td>@commentCount</td>
+                    }
+                }
+                <td>
+                    <p align="center">
+                        @if (@ViewBag.Prediction[i] >= 4)
+                        {
+                            <img src="~/creativboard-converted-01-.jpg" width="60" height="35" />
+                        }
+                    </p>
+                </td>
+            </tr>
+        }
+    </table>
+</div>
