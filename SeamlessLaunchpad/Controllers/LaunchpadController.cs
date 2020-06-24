@@ -829,14 +829,6 @@ namespace SeamlessLaunchpad.Controllers
 
         }
 
-
-        //public async Task<IActionResult> TestKeywordExtraction()
-        //{
-        //    //List<StartupContainer> sc = (await Utilities.GetApiResponse<StartupListRootObject>("v0/appFo187B73tuYhyg", "Master List", "https://api.airtable.com", "api_key", ApiKey)).FirstOrDefault().Records;
-        //    //List<StartupKeywords> lsk = await KeywordMatching.SetupKeywords(sc, _context);
-        //    //return View(lsk);
-        //}
-
         public async Task<IActionResult> Distance(int id, int startzip, int endzip)
         {
             DistanceModel dis = (await Utilities.GetApiResponse<DistanceModel>($"rest/distance.json/{startzip:D5}/{endzip:D5}", "mile", "https://redline-redline-zipcode.p.rapidapi.com", "rapidapi-key", RedlineApiKey)).FirstOrDefault();
@@ -847,7 +839,6 @@ namespace SeamlessLaunchpad.Controllers
             }
             return RedirectToAction("ViewSingle", new { id = id, distance = dis.Distance});
         }
-
 
     }
 }
