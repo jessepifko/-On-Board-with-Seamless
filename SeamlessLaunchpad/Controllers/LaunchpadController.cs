@@ -63,6 +63,10 @@ namespace SeamlessLaunchpad.Controllers
 
         }
 
+        public IActionResult ViewLandingPage()
+        {
+            return View(); 
+        }
 
         public async Task<IActionResult> Index2()
         {
@@ -824,15 +828,14 @@ namespace SeamlessLaunchpad.Controllers
             return newScore;
 
         }
-<<<<<<< HEAD
-=======
 
-        public async Task<IActionResult> TestKeywordExtraction()
-        {
-            List<StartupContainer> sc = (await Utilities.GetApiResponse<StartupListRootObject>("v0/appFo187B73tuYhyg", "Master List", "https://api.airtable.com", "api_key", ApiKey)).FirstOrDefault().Records;
-            List<StartupKeywords> lsk = await KeywordMatching.SetupKeywords(sc, _context);
-            return View(lsk);
-        }
+
+        //public async Task<IActionResult> TestKeywordExtraction()
+        //{
+        //    //List<StartupContainer> sc = (await Utilities.GetApiResponse<StartupListRootObject>("v0/appFo187B73tuYhyg", "Master List", "https://api.airtable.com", "api_key", ApiKey)).FirstOrDefault().Records;
+        //    //List<StartupKeywords> lsk = await KeywordMatching.SetupKeywords(sc, _context);
+        //    //return View(lsk);
+        //}
 
         public async Task<IActionResult> Distance(int id, int startzip, int endzip)
         {
@@ -845,6 +848,6 @@ namespace SeamlessLaunchpad.Controllers
             return RedirectToAction("ViewSingle", new { id = id, distance = dis.Distance});
         }
 
->>>>>>> b7a749d892ac80b347287d1bf7a3f0959066324a
+
     }
 }
