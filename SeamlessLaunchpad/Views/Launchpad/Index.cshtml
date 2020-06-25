@@ -10,25 +10,23 @@
     </div>
     <div class=infoBlock>
         <table class="table" class="table-dark">
+            <tr>
+                <th>Seamless Company </th>
+                <th>Success Rating</th>
+
+            </tr>
             @foreach (StartupContainer startup in ViewBag.StartupList)
             {
                 <tr>
-                    <th>Seamless Company </th>
-                    <th>Success Rating</th>
-
-                </tr>
-
-                <tr>
                     <td>@startup.Fields.CompanyName</td>
                     <td align="justify">
-                        @SuccessPredictor.PredictSuccess(startup.Fields, feedbacks.Where(x => x.Fields.Startup.Equals(startup.Fields.CompanyName)).ToList());
+                        @SuccessPredictor.PredictSuccess(startup.Fields, feedbacks.Where(x => x.Fields.Startup.Equals(startup.Fields.CompanyName)).ToList())
                         @if (SuccessPredictor.PredictSuccess(startup.Fields, feedbacks.Where(x => x.Fields.Startup.Equals(startup.Fields.CompanyName)).ToList()) >= 6)
                         {
-                            <img src="~/creativboard-converted-01-.jpg" width="60" height="35" />
+                            <img src="~/creativboard-converted-01-.jpg" width="35" height="22" />
                         }
                     </td>
                 </tr>
-
             }
         </table>
     </div>

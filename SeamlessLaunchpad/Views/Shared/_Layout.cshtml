@@ -8,7 +8,7 @@
     <link rel="stylesheet" href="~/css/site.css" />
     <link rel="stylesheet" href="~/css/singleView.css" />
     <link rel="stylesheet" href="~/css/StyleSheet.css" />
-
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
 </head>
 <body>
 <header>
@@ -22,13 +22,13 @@
             <div class="navbar-collapse collapse d-sm-inline-flex flex-sm-row-reverse">
                 <partial name="_LoginPartial" />
                 <ul class="navbar-nav flex-grow-1">
-                    <li class="nav-item">
+                    <li class="nav-item navbar-link">
                         <a class="nav-link text-dark" asp-area="" asp-controller="Launchpad" asp-action="ViewLandingPage">Home</a>
                     </li>
-                    <li class="nav-item">
+                    <li class="nav-item navbar-link">
                         <a class="nav-link text-dark" asp-area="" asp-controller="Launchpad" asp-action="ViewDashboard">Dashboard</a>
                     </li>
-                    <li class="nav-item">
+                    <li class="nav-item navbar-link">
                         <a class="nav-link text-dark" asp-area="" asp-controller="Launchpad" asp-action="Index">Forecast</a>
                     </li>
                 </ul>
@@ -48,8 +48,8 @@
     </div>
 </footer>
 <script src="~/lib/jquery/dist/jquery.min.js"></script>
-<script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
-<script src="~/js/site.js" asp-append-version="true"></script>
-@RenderSection("Scripts", required: false)
-</body>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="~/js/site.js" asp-append-version="true"></script>
+    @RenderSection("Scripts", required: false)
+    </body>
 </html>
