@@ -10,6 +10,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Diagnostics;
 using Microsoft.EntityFrameworkCore.Metadata.Internal;
+using Microsoft.VisualBasic;
 using SeamlessLaunchpad.Models;
 using SeamlessLaunchpad.ViewModel;
 using Startup = SeamlessLaunchpad.Models.Startup;
@@ -268,6 +269,8 @@ namespace SeamlessLaunchpad.Controllers
                         }
                     }
                 }
+                
+                ViewBag.HTW = "hide";
             }
             else
             {
@@ -277,61 +280,73 @@ namespace SeamlessLaunchpad.Controllers
             {
                 startups = startups.Where(x => x.Theme.Contains("The Good Life")).ToList();
                 ViewBag.TheGoodLife = true;
+                ViewBag.HTW = "hide";
             }
             if (!string.IsNullOrEmpty(healthbeyondthehospital))
             {
                 startups = startups.Where(x => x.Theme.Contains("Health Beyond the Hospital")).ToList();
                 ViewBag.HealthBeyondTheHospital = true;
+                ViewBag.HTW = "hide";
             }
             if (!string.IsNullOrEmpty(robustfuture))
             {
                 startups = startups.Where(x => x.Theme.Contains("Robust Future")).ToList();
                 ViewBag.RobustFuture = true;
+                ViewBag.HTW = "hide";
             }
             if (!string.IsNullOrEmpty(convenienceproductivity))
             {
                 startups = startups.Where(x => x.Theme.Contains("Convenience")).ToList();
                 ViewBag.ConvenienceProductivity = true;
+                ViewBag.HTW = "hide";
             }
             if (!string.IsNullOrEmpty(softwareai))
             {
                 startups = startups.Where(x => x.TechArea.Contains("Software / AI")).ToList();
                 ViewBag.SoftwareAI = true;
+                ViewBag.HTW = "hide";
             }
             if (!string.IsNullOrEmpty(sensing))
             {
                 startups = startups.Where(x => x.TechArea.Contains("Sensing")).ToList();
                 ViewBag.Sensing = true;
+                ViewBag.HTW = "hide";
             }
             if (!string.IsNullOrEmpty(robotics))
             {
                 startups = startups.Where(x => x.TechArea.Contains("Robotics")).ToList();
                 ViewBag.Robotics = true;
+                ViewBag.HTW = "hide";
             }
             if (!string.IsNullOrEmpty(products))
             {
                 startups = startups.Where(x => x.TechArea.Contains("Products")).ToList();
                 ViewBag.Products = true;
+                ViewBag.HTW = "hide";
             }
             if (!string.IsNullOrEmpty(advancedmaterials))
             {
                 startups = startups.Where(x => x.TechArea.Contains("Advanced Materials")).ToList();
                 ViewBag.AdvancedMaterials = true;
+                ViewBag.HTW = "hide";
             }
             if (!string.IsNullOrEmpty(businessprocess))
             {
                 startups = startups.Where(x => x.TechArea.Contains("Business Process")).ToList();
                 ViewBag.BusinessProcess = true;
+                ViewBag.HTW = "hide";
             }
             if (!string.IsNullOrEmpty(city))
             {
                 startups = startups.Where(x => x.City != null && x.City.ToLower().Contains(city.ToLower())).ToList();
                 ViewBag.City = city;
+                ViewBag.HTW = "hide";
             }
             if (!string.IsNullOrEmpty(country))
             {
                 startups = startups.Where(x => x.Country != null && x.Country.ToLower().Contains(country.ToLower())).ToList();
                 ViewBag.Country = country;
+                ViewBag.HTW = "hide";
             }
             Dictionary<int, int> startupFavoriteCount = new Dictionary<int, int>();
             List<Favorites> allFavorites = _context.Favorites.ToList<Favorites>();

@@ -6,27 +6,40 @@
 @{
     ViewData["Title"] = "ViewDashboard";
 }
-
-@model SeamlessLaunchpad.ViewModel.FavoritesViewModel
-
-@*<h3>Dashboard</h3>*@
 <a href="\Launchpad\AddStartup"><input type="button" class="btn btn-primary my-1 mr-sm-2" name="Add Startup" value="Add Startup" /></a>
 <br /><br />
-<h3>Hot to Watch:</h3>
-<div class="infoBlock">
-    @for (int i = 0; i < Math.Min(2, Model.FavoriteCount.Count); i++)
-    {
-        int hotStartupId = Model.FavoriteCount[i].Key;
-        <p>@Model.FavoriteCount[i].Value other Seamless users are watching <a href="/Launchpad/ViewSingle/?id=@hotStartupId"> @Model.StartupsToReview[i].Name </a></p>
-    }
-</div>
 
-<h3>Current Startups:</h3>
-<a href="/Launchpad/ViewDashboard?favOnly=yes">View only your Favorites</a>
-<a href="/Launchpad/ViewDashboard">View all</a>
-<br />
+@model SeamlessLaunchpad.ViewModel.FavoritesViewModel
+@if (ViewBag.HTW == null)
+{
+    <h3>Hot to Watch:</h3>
+    <div class="infoBlock">
+        <div class="row">
+            @for (int i = 0; i < Math.Min(2, Model.FavoriteCount.Count); i++)
+            {
+                <div class="col-auto">
+                    @{int hotStartupId = Model.FavoriteCount[i].Key;
+                    }
+                    <p>@Model.FavoriteCount[i].Value other Seamless users are watching <a href="/Launchpad/ViewSingle/?id=@hotStartupId"> @Model.StartupsToReview[i].Name </a></p>
+                </div>
+            }
+        </div>
+    </div>
+
+}
+
+
+<h3>View Preferences:</h3>
 <div class="infoBlock">
-Filter startups:
+<b>Filter startups:</b>
+    <div class="row">
+        <div class="col-auto">
+            <a href="/Launchpad/ViewDashboard?favOnly=yes">View only your Favorites</a>
+        </div>
+        <div class="col-auto">
+            <a href="/Launchpad/ViewDashboard">View all</a>
+        </div>
+    </div>
 <br />
     <form action="/Launchpad/ViewDashboard" method="get">
         <input type="hidden" name="favOnly" value="no" />
@@ -81,55 +94,76 @@ Filter startups:
 </div>
 <br />
 <h3>In Progress</h3>
-@*<div class="container-fluid">*@
-    <div class="infoBlock">
-        <table class="align-self-sm-center">
-            <style>
-                td {
-                    padding: 15px;
-                }
-            </style>
-            <th>Name</th>
-            <th>City</th>
-            <th>Country</th>
-            <th>Summary</th>
-            <th>Themes</th>
-            <th>Tech Area</th>
-            <th>Date Added</th>
-            <th>Declared Interest</th>
-            <th>Favorited</th>
-            <th>Commented</th>
-            <th>Success Predictor</th>
-            </tr>
-            @for (int i = 0; i < Model.StartupsToReview.Count; i++)
+
+
+
+<div class="infoBlock container-fluid p" padding: 15px;>
+    
+    @for (int i = 0; i < Model.StartupsToReview.Count; i++)
+    {
+        bool fav = false;
+        @foreach (var f in Model.FavoriteStartups)
+        {
+            if (f.StartupId == Model.StartupsToReview[i].Id)
             {
-                bool fav = false;
-                @foreach (var f in Model.FavoriteStartups)
+                fav = true;
+            }
+        }
+        
+    <div class="row border-bottom">
+        <div class="col-sm-2">
+            <div class="row">
+                <h6 align="left"><b><a href="/Launchpad/ViewSingle?id=@Model.StartupsToReview[i].Id">@Model.StartupsToReview[i].Name</a></b></h6>
+            </div>
+            <div class="row">
+                @if (@ViewBag.Prediction[i] >= 4)
                 {
-                    if (f.StartupId == Model.StartupsToReview[i].Id)
-                    {
-                        fav = true;
-                    }
+                    <img src="~/creativboard-converted-01-.jpg" width="40" height="25" />
                 }
-                <tr>
-                    <td><a href="/Launchpad/ViewSingle?id=@Model.StartupsToReview[i].Id">@Model.StartupsToReview[i].Name</a></td>
-                    <td>@Model.StartupsToReview[i].City</td>
-                    <td>@Model.StartupsToReview[i].Country</td>
-                    <td>@Model.StartupsToReview[i].Summary</td>
-                    <td>@Model.StartupsToReview[i].Theme</td>
-                    <td>@Model.StartupsToReview[i].TechArea</td>
-                    <td>@Model.StartupsToReview[i].DateAdded</td>
-                    <td>@Model.StartupsToReview[i].InterestedPartners</td>
+                else
+                { <p></p> }
+
+                </div>
+
+        </div>
+
+        <div class="col-2">
+            <div class="row">
+                <p><b>LOCATION: </b>@Model.StartupsToReview[i].City, @Model.StartupsToReview[i].Country, @Model.StartupsToReview[i].Zip</p>
+            </div>
+            <div class="row">
+                <p><b>DATE ADDED: </b>@Model.StartupsToReview[i].DateAdded</p>
+            </div>
+        </div>
+
+        <div class="col-7">
+            <div class="row">
+                <p><b>SUMMARY: </b>@Model.StartupsToReview[i].Summary</p>
+            </div>
+            <div class="row">
+                <div class="col-sm-auto">
+                    <p><b>INTERESTED PARTNERS: </b>@Model.StartupsToReview[i].InterestedPartners</p>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-sm-auto">
+                    <p><b>THEME: </b>@Model.StartupsToReview[i].Theme <b>TECH AREAS: </b> @Model.StartupsToReview[i].TechArea</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-1">
+            <div class="row">
                     @if (fav)
                     {
                         int favoriteCountExcludingYou = Model.FavoriteCount.FirstOrDefault(x => x.Key == Model.StartupsToReview[i].Id).Value - 1;
                         if (favoriteCountExcludingYou == 0)
                         {
-                            <td>You</td>
+                            <p><b>Favs: </b>You</p>
                         }
                         else
                         {
-                            <td>@favoriteCountExcludingYou and You</td>
+                            <p><b>Favs: </b>@favoriteCountExcludingYou + You</p>
                         }
                     }
                     else
@@ -137,34 +171,27 @@ Filter startups:
                         int favoriteCountExcludingYou = Model.FavoriteCount.FirstOrDefault(x => x.Key == Model.StartupsToReview[i].Id).Value;
                         if (favoriteCountExcludingYou == 0)
                         {
-                            <td>0</td>
+                            <p><b>Favs: </b>0</p>
                         }
                         else
                         {
-                            <td>@Model.FavoriteCount.FirstOrDefault(x => x.Key == Model.StartupsToReview[i].Id).Value</td>
+                            <p><b>Favs: </b>@Model.FavoriteCount.FirstOrDefault(x => x.Key == Model.StartupsToReview[i].Id).Value</p>
                         }
                     }
-                    @{
-                        int commentCount = Model.CommentCount.FirstOrDefault(x => x.Key == Model.StartupsToReview[i].Id).Value;
-                        if (commentCount == 0)
-                        {
-                            <td></td>
-                        }
-                        else
-                        {
-                            <td>@commentCount</td>
-                        }
-                    }
-                    <td>
-                        <p align="center">
-                            @if (@ViewBag.Prediction[i] >= 4)
-                            {
-                                <img src="~/creativboard-converted-01-.jpg" width="60" height="35" />
-                            }
-                        </p>
-                    </td>
-                </tr>
-            }
-        </table>
+            </div>
+            <div class="row">
+                @{
+                    int commentCount = Model.CommentCount.FirstOrDefault(x => x.Key == Model.StartupsToReview[i].Id).Value;
+                    <p><b>Comments: </b>@commentCount</p>
+                  }
+            </div>
+        </div>
+
+       
     </div>
-    @*</div>*@
+    }
+</div>
+
+
+
+  

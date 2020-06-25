@@ -3,15 +3,15 @@
     ViewData["Title"] = "AddStartup";
 }
 
-<h1>Add Startup</h1>
+<h3>Add Startup</h3>
 
-
-<form action="/Launchpad/AddStartup" method="get">
-    <p>Enter startup name, company summary, team score, and uniqueness </p>
-    <input type="text" name="Name" required="required" placeholder="Name" />
-    <input type="text" name="Summary" required="required" size="50" placeholder="Two Line Startup Summary" />
-    <input type="number" name="TeamScore" min=1 max=5 placeholder="Team Score (1-5)" />
-    <input type="number" name="Uniqueness" min=1 max=5 placeholder="Uniqueness (1-5)" />
+<div class="infoBlock">
+    <form action="/Launchpad/AddStartup" method="get">
+        <p>Enter startup name, company summary, team score, and uniqueness </p>
+        <input type="text" name="Name" required="required" placeholder="Name" />
+        <input type="text" name="Summary" required="required" size="50" placeholder="Two Line Startup Summary" />
+        <input type="number" name="TeamScore" min=1 max=5 placeholder="Team Score (1-5)" />
+        <input type="number" name="Uniqueness" min=1 max=5 placeholder="Uniqueness (1-5)" />
         <div name="themes">
             <p>Select all the following themes that apply</p>
             <input type="checkbox" id="thegoodlife" name="thegoodlife" value="The Good Life">
@@ -43,5 +43,6 @@
         <input type="text" name="Country" required="required" placeholder="Country" />
         <input type="hidden" name="dateadded" value="@DateTime.Now.ToString("yyyy-MM-dd")" />
 
-        <input type="submit" value="Submit" />
-</form>
+        <input type="submit"  class="btn btn-primary my-1 mr-sm-2" value="Submit" />
+    </form>
+</div>
