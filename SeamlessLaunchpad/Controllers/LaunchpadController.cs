@@ -406,19 +406,10 @@ namespace SeamlessLaunchpad.Controllers
             string userId = User.FindFirst(ClaimTypes.NameIdentifier).Value;
             UserView view = _context.UserView.FirstOrDefault(x => x.Id == selectedView && x.UserId.Equals(userId));
             List<ViewFilter> filters = _context.ViewFilter.Where(y => y.ViewId == view.Id).ToList();
-            bool first = true;
-            string url = "/Launchpad/ViewDashboard";
+            string url = "/Launchpad/ViewDashboard?favOnly=no";
             foreach(ViewFilter f in filters)
             {
-                if (first)
-                {
-                    url += $"?{f.FilterName}={Uri.EscapeDataString(f.FilterValue)}";
-                }
-                else
-                {
-                    url += $"&{f.FilterName}={Uri.EscapeDataString(f.FilterValue)}";
-                }
-                first = false;
+                url += $"&{f.FilterName}={Uri.EscapeDataString(f.FilterValue)}";
             }
             url += $"&viewname={selectedView}";
             return Redirect(url);
