@@ -6,25 +6,28 @@
 @{
     ViewData["Title"] = "ViewDashboard";
 }
-
-@model SeamlessLaunchpad.ViewModel.FavoritesViewModel
-
-@*<h3>Dashboard</h3>*@
 <a href="\Launchpad\AddStartup"><input type="button" class="btn btn-primary my-1 mr-sm-2" name="Add Startup" value="Add Startup" /></a>
 <br /><br />
-<h3>Hot to Watch:</h3>
-<div class="infoBlock">
-    <div class="row">
-        @for (int i = 0; i < Math.Min(2, Model.FavoriteCount.Count); i++)
-        {
-            <div class="col-auto">
-                @{int hotStartupId = Model.FavoriteCount[i].Key;
-                }
-                <p>@Model.FavoriteCount[i].Value other Seamless users are watching <a href="/Launchpad/ViewSingle/?id=@hotStartupId"> @Model.StartupsToReview[i].Name </a></p>
-            </div>
-        }
+
+@model SeamlessLaunchpad.ViewModel.FavoritesViewModel
+@if (ViewBag.HTW == null)
+{
+    <h3>Hot to Watch:</h3>
+    <div class="infoBlock">
+        <div class="row">
+            @for (int i = 0; i < Math.Min(2, Model.FavoriteCount.Count); i++)
+            {
+                <div class="col-auto">
+                    @{int hotStartupId = Model.FavoriteCount[i].Key;
+                    }
+                    <p>@Model.FavoriteCount[i].Value other Seamless users are watching <a href="/Launchpad/ViewSingle/?id=@hotStartupId"> @Model.StartupsToReview[i].Name </a></p>
+                </div>
+            }
+        </div>
     </div>
-</div>
+
+}
+
 
 <h3>View Preferences:</h3>
 <div class="infoBlock">
