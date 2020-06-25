@@ -71,7 +71,7 @@ namespace SeamlessLaunchpad
             {
                 endpoints.MapControllerRoute(
                     name: "default",
-                    pattern: "{controller=Launchpad}/{action=Index}/{id?}");
+                    pattern: "{controller=Launchpad}/{action=ViewLandingPage}/{id?}");
                 endpoints.MapRazorPages();
             });
         }

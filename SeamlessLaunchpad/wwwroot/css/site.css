@@ -71,8 +71,9 @@ body {
 }
 
 .navbar-link {
-    transition: background-color 0.65s ease;
+    transition: background-color 0.65s ease !important;
 }
 .nav-hover {
-    background-color: #ff1e00;
+    background-color: #ff1e00 !important;
+
 }
