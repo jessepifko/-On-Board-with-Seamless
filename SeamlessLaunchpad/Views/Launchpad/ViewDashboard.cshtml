@@ -8,160 +8,163 @@
 }
 
 @model SeamlessLaunchpad.ViewModel.FavoritesViewModel
-<<<<<<< HEAD
-<h3>ViewDashboard</h3>
-=======
 
-<h3>Dashboard</h3>
->>>>>>> 4f2691f6aafe5ebdb23b0609bb5eebbe91e61f6d
+@*<h3>Dashboard</h3>*@
+<a href="\Launchpad\AddStartup"><input type="button" class="btn btn-primary my-1 mr-sm-2" name="Add Startup" value="Add Startup" /></a>
+<br /><br />
+<h3>Hot to Watch:</h3>
+<div class="infoBlock">
+    @for (int i = 0; i < Math.Min(2, Model.FavoriteCount.Count); i++)
+    {
+        int hotStartupId = Model.FavoriteCount[i].Key;
+        <p>@Model.FavoriteCount[i].Value other Seamless users are watching <a href="/Launchpad/ViewSingle/?id=@hotStartupId"> @Model.StartupsToReview[i].Name </a></p>
+    }
+</div>
 
-<a href="\Launchpad\AddStartup">Add a Startup</a>
-<h4>Hot Prospects:</h4>
-@for (int i = 0; i < Math.Min(2, Model.FavoriteCount.Count); i++)
-{
-    int hotStartupId = Model.FavoriteCount[i].Key;
-    <p>@Model.FavoriteCount[i].Value other Seamless users are watching <a href="/Launchpad/ViewSingle/?id=@hotStartupId"> @Model.StartupsToReview[i].Name </a></p>
-}
-
-<h4>Current Prospects:</h4>
+<h3>Current Startups:</h3>
 <a href="/Launchpad/ViewDashboard?favOnly=yes">View only your Favorites</a>
 <a href="/Launchpad/ViewDashboard">View all</a>
 <br />
+<div class="infoBlock">
 Filter startups:
 <br />
+    <form action="/Launchpad/ViewDashboard" method="get">
+        <input type="hidden" name="favOnly" value="no" />
+        Theme(s):
+        <div class="form-check-inline" name="themes">
+            <input type="checkbox" class="form-check-input" id="thegoodlife" name="thegoodlife" value="The Good Life" @(ViewBag.TheGoodLife != null ? "checked" : "")>
+            <label class="form-check-label" style="padding-right: 0.25em;" for="thegoodlife">The Good Life</label>
+            <input type="checkbox" class="form-check-input" id="healthbeyondthehotpital" name="healthbeyondthehospital" value="Health Beyond the Hospital" @(ViewBag.HealthBeyondTheHospital != null ? "checked" : "")>
+            <label class="form-check-label" style="padding-right: 0.25em;" for="healthbeyondthehotpital">Health Beyond the Hospital</label>
+            <input type="checkbox" class="form-check-input" id="robustfuture" name="robustfuture" value="Robust Future" @(ViewBag.RobustFuture != null ? "checked" : "")>
+            <label class="form-check-label" style="padding-right: 0.25em;" for="robustfuture">Robust Future</label>
+            <input type="checkbox" class="form-check-input" id="convenienceandproductivity" name="convenienceproductivity" value="Convenience & Productivity" @(ViewBag.ConvenienceProductivity != null ? "checked" : "")>
+            <label class="form-check-label" style="padding-right: 0.25em;" for="convenienceandproductivity">Convenience & Productivity</label>
+        </div><br />
+        Tech Area:
+        <div name="techarea" class="form-check-inline">
+            <input type="checkbox" class="form-check-input" id="softwareai" name="softwareai" value="Software / AI" @(ViewBag.SoftwareAI != null ? "checked" : "")>
+            <label class="form-check-label" style="padding-right: 0.25em;" for="softwareai">Software / AI</label>
+            <input type="checkbox" class="form-check-input" id="sensing" name="sensing" value="Sensing" @(ViewBag.Sensing != null ? "checked" : "")>
+            <label class="form-check-label" style="padding-right: 0.25em;" for="sensing">Sensing</label>
+            <input type="checkbox" class="form-check-input" id="robotics" name="robotics" value="Robotics" @(ViewBag.Robotics != null ? "checked" : "")>
+            <label class="form-check-label" style="padding-right: 0.25em;" for="robotics">Robotics</label>
+            <input type="checkbox" class="form-check-input" id="products" name="products" value="Products" @(ViewBag.Products != null ? "checked" : "")>
+            <label class="form-check-label" style="padding-right: 0.25em;" for="products">Products</label>
+            <input type="checkbox" class="form-check-input" id="advancedmaterials" name="advancedmaterials" value="Advanced Materials" @(ViewBag.AdvancedMaterials != null ? "checked" : "")>
+            <label class="form-check-label" style="padding-right: 0.25em;" for="advancedmaterials">Advanced Materials</label>
+            <input type="checkbox" class="form-check-input" id="businessprocess" name="businessprocess" value="Business Process" @(ViewBag.BusinessProcess != null ? "checked" : "")>
+            <label class="form-check-label" style="padding-right: 0.25em;" for="businessprocess">Business Process</label>
+        </div>
+        <div class="form-inline">
+            <input type="text" class="form-control mb-2 mr-sm-2" name="City" placeholder="City" @(!string.IsNullOrEmpty(ViewBag.City) ? $"value={ViewBag.City}" : "") /><br />
+            <input type="text" class="form-control mb-2 mr-sm-2" name="Country" placeholder="Country" @(!string.IsNullOrEmpty(ViewBag.Country) ? $"value={ViewBag.Country}" : "") /><br />
+            <input type="submit" class="btn btn-primary mb-2" value="Filter!" />
+        </div>
+        <div class="form-inline">
+            <input type="text" class="form-control mb-2 mr-sm-2" placeholder="View name..." name="viewname" />
+            <input type="submit" class="btn btn-primary mb-2" formaction="/Launchpad/SaveView" value="Save this View" /><br />
+        </div>
+    </form>
 
-<form action="/Launchpad/ViewDashboard" method="get">
-    <input type="hidden" name="favOnly" value="no" />
-    Theme(s):
-    <div class="form-check-inline" name="themes">
-        <input type="checkbox" class="form-check-input" id="thegoodlife" name="thegoodlife" value="The Good Life" @(ViewBag.TheGoodLife != null ? "checked" : "")>
-        <label class="form-check-label" style="padding-right: 0.25em;" for="thegoodlife">The Good Life</label>
-        <input type="checkbox" class="form-check-input" id="healthbeyondthehotpital" name="healthbeyondthehospital" value="Health Beyond the Hospital" @(ViewBag.HealthBeyondTheHospital != null ? "checked" : "")>
-        <label class="form-check-label" style="padding-right: 0.25em;" for="healthbeyondthehotpital">Health Beyond the Hospital</label>
-        <input type="checkbox" class="form-check-input" id="robustfuture" name="robustfuture" value="Robust Future" @(ViewBag.RobustFuture != null ? "checked" : "")>
-        <label class="form-check-label" style="padding-right: 0.25em;" for="robustfuture">Robust Future</label>
-        <input type="checkbox" class="form-check-input" id="convenienceandproductivity" name="convenienceproductivity" value="Convenience & Productivity" @(ViewBag.ConvenienceProductivity != null ? "checked" : "")>
-        <label class="form-check-label" style="padding-right: 0.25em;" for="convenienceandproductivity">Convenience & Productivity</label>
-    </div><br />
-    Tech Area:
-    <div name="techarea" class="form-check-inline">
-        <input type="checkbox" class="form-check-input" id="softwareai" name="softwareai" value="Software / AI" @(ViewBag.SoftwareAI != null ? "checked" : "")>
-        <label class="form-check-label" style="padding-right: 0.25em;" for="softwareai">Software / AI</label>
-        <input type="checkbox" class="form-check-input" id="sensing" name="sensing" value="Sensing" @(ViewBag.Sensing != null ? "checked" : "")>
-        <label class="form-check-label" style="padding-right: 0.25em;" for="sensing">Sensing</label>
-        <input type="checkbox" class="form-check-input" id="robotics" name="robotics" value="Robotics" @(ViewBag.Robotics != null ? "checked" : "")>
-        <label class="form-check-label" style="padding-right: 0.25em;" for="robotics">Robotics</label>
-        <input type="checkbox" class="form-check-input" id="products" name="products" value="Products" @(ViewBag.Products != null ? "checked" : "")>
-        <label class="form-check-label" style="padding-right: 0.25em;" for="products">Products</label>
-        <input type="checkbox" class="form-check-input" id="advancedmaterials" name="advancedmaterials" value="Advanced Materials" @(ViewBag.AdvancedMaterials != null ? "checked" : "")>
-        <label class="form-check-label" style="padding-right: 0.25em;" for="advancedmaterials">Advanced Materials</label>
-        <input type="checkbox" class="form-check-input" id="businessprocess" name="businessprocess" value="Business Process" @(ViewBag.BusinessProcess != null ? "checked" : "")>
-        <label class="form-check-label" style="padding-right: 0.25em;" for="businessprocess">Business Process</label>
-    </div>
-    <div class="form-inline">
-        <input type="text" class="form-control mb-2 mr-sm-2" name="City" placeholder="City" @(!string.IsNullOrEmpty(ViewBag.City) ? $"value={ViewBag.City}" : "") /><br />
-        <input type="text" class="form-control mb-2 mr-sm-2" name="Country" placeholder="Country" @(!string.IsNullOrEmpty(ViewBag.Country) ? $"value={ViewBag.Country}" : "") /><br />
-        <input type="submit" class="btn btn-primary mb-2" value="Filter!" />
-    </div>
-    <div class="form-inline">
-        <input type="text" class="form-control mb-2 mr-sm-2" placeholder="View name..." name="viewname" />
-        <input type="submit" class="btn btn-primary mb-2" formaction="/Launchpad/SaveView" value="Save this View" /><br />
-    </div>
-</form>
-<br />
-Select saved view:
-<form action="/Launchpad/GetSavedView" class="form-inline" method="get">
-    <select class="custom-select my-1 mr-sm-2" name="selectedView">
-        <option selected>Choose...</option>
-        @foreach (UserView view in ViewBag.UserViews)
-        {
-            @Html.Raw($"<option value=\"{view.Id}\">{view.Name}</option>")
-        }
-    </select><br />
-    <input type="submit" class="btn btn-primary my-1 mr-sm-2" value="Select View" />
-</form>
-<div class="table-responsive">
-    <table class="align-self-sm-center">
-        <style>
-            td {
-                padding: 15px;
-            }
-        </style>
-        <th>Name</th>
-        <th>City</th>
-        <th>Country</th>
-        <th>Summary</th>
-        <th>Themes</th>
-        <th>Tech Area</th>
-        <th>Date Added</th>
-        <th>Declared Interest</th>
-        <th>Favorited</th>
-        <th>Commented</th>
-        <th>Success Predictor</th>
-        </tr>
-        @for (int i = 0; i < Model.StartupsToReview.Count; i++)
-        {
-            bool fav = false;
-            @foreach (var f in Model.FavoriteStartups)
+    <form action="/Launchpad/GetSavedView" class="form-inline" method="get">
+        <select class="custom-select my-1 mr-sm-2" name="selectedView">
+            <option selected>Choose...</option>
+            @foreach (UserView view in ViewBag.UserViews)
             {
-                if (f.StartupId == Model.StartupsToReview[i].Id)
-                {
-                    fav = true;
-                }
+                @Html.Raw($"<option value=\"{view.Id}\">{view.Name}</option>")
             }
-            <tr>
-                <td><a href="/Launchpad/ViewSingle?id=@Model.StartupsToReview[i].Id">@Model.StartupsToReview[i].Name</a></td>
-                <td>@Model.StartupsToReview[i].City</td>
-                <td>@Model.StartupsToReview[i].Country</td>
-                <td>@Model.StartupsToReview[i].Summary</td>
-                <td>@Model.StartupsToReview[i].Theme</td>
-                <td>@Model.StartupsToReview[i].TechArea</td>
-                <td>@Model.StartupsToReview[i].DateAdded</td>
-                <td>@Model.StartupsToReview[i].InterestedPartners</td>
-                @if (fav)
-                {
-                    int favoriteCountExcludingYou = Model.FavoriteCount.FirstOrDefault(x => x.Key == Model.StartupsToReview[i].Id).Value - 1;
-                    if (favoriteCountExcludingYou == 0)
-                    {
-                        <td>You</td>
-                    }
-                    else
-                    {
-                        <td>@favoriteCountExcludingYou and You</td>
-                    }
-                }
-                else
-                {
-                    int favoriteCountExcludingYou = Model.FavoriteCount.FirstOrDefault(x => x.Key == Model.StartupsToReview[i].Id).Value;
-                    if (favoriteCountExcludingYou == 0)
-                    {
-                        <td>0</td>
-                    }
-                    else
-                    {
-                        <td>@Model.FavoriteCount.FirstOrDefault(x => x.Key == Model.StartupsToReview[i].Id).Value</td>
-                    }
-                }
-                @{
-                    int commentCount = Model.CommentCount.FirstOrDefault(x => x.Key == Model.StartupsToReview[i].Id).Value;
-                    if (commentCount == 0)
-                    {
-                        <td></td>
-                    }
-                    else
-                    {
-                        <td>@commentCount</td>
-                    }
-                }
-                <td>
-                    <p align="center">
-                        @if (@ViewBag.Prediction[i] >= 4)
-                        {
-                            <img src="~/creativboard-converted-01-.jpg" width="60" height="35" />
-                        }
-                    </p>
-                </td>
-            </tr>
-        }
-    </table>
+        </select><br />
+        <input type="submit" class="btn btn-primary my-1 mr-sm-2" value="Select View" />
+    </form>
+    <p> Select saved view</p>
 </div>
+<br />
+<h3>In Progress</h3>
+@*<div class="container-fluid">*@
+    <div class="infoBlock">
+        <table class="align-self-sm-center">
+            <style>
+                td {
+                    padding: 15px;
+                }
+            </style>
+            <th>Name</th>
+            <th>City</th>
+            <th>Country</th>
+            <th>Summary</th>
+            <th>Themes</th>
+            <th>Tech Area</th>
+            <th>Date Added</th>
+            <th>Declared Interest</th>
+            <th>Favorited</th>
+            <th>Commented</th>
+            <th>Success Predictor</th>
+            </tr>
+            @for (int i = 0; i < Model.StartupsToReview.Count; i++)
+            {
+                bool fav = false;
+                @foreach (var f in Model.FavoriteStartups)
+                {
+                    if (f.StartupId == Model.StartupsToReview[i].Id)
+                    {
+                        fav = true;
+                    }
+                }
+                <tr>
+                    <td><a href="/Launchpad/ViewSingle?id=@Model.StartupsToReview[i].Id">@Model.StartupsToReview[i].Name</a></td>
+                    <td>@Model.StartupsToReview[i].City</td>
+                    <td>@Model.StartupsToReview[i].Country</td>
+                    <td>@Model.StartupsToReview[i].Summary</td>
+                    <td>@Model.StartupsToReview[i].Theme</td>
+                    <td>@Model.StartupsToReview[i].TechArea</td>
+                    <td>@Model.StartupsToReview[i].DateAdded</td>
+                    <td>@Model.StartupsToReview[i].InterestedPartners</td>
+                    @if (fav)
+                    {
+                        int favoriteCountExcludingYou = Model.FavoriteCount.FirstOrDefault(x => x.Key == Model.StartupsToReview[i].Id).Value - 1;
+                        if (favoriteCountExcludingYou == 0)
+                        {
+                            <td>You</td>
+                        }
+                        else
+                        {
+                            <td>@favoriteCountExcludingYou and You</td>
+                        }
+                    }
+                    else
+                    {
+                        int favoriteCountExcludingYou = Model.FavoriteCount.FirstOrDefault(x => x.Key == Model.StartupsToReview[i].Id).Value;
+                        if (favoriteCountExcludingYou == 0)
+                        {
+                            <td>0</td>
+                        }
+                        else
+                        {
+                            <td>@Model.FavoriteCount.FirstOrDefault(x => x.Key == Model.StartupsToReview[i].Id).Value</td>
+                        }
+                    }
+                    @{
+                        int commentCount = Model.CommentCount.FirstOrDefault(x => x.Key == Model.StartupsToReview[i].Id).Value;
+                        if (commentCount == 0)
+                        {
+                            <td></td>
+                        }
+                        else
+                        {
+                            <td>@commentCount</td>
+                        }
+                    }
+                    <td>
+                        <p align="center">
+                            @if (@ViewBag.Prediction[i] >= 4)
+                            {
+                                <img src="~/creativboard-converted-01-.jpg" width="60" height="35" />
+                            }
+                        </p>
+                    </td>
+                </tr>
+            }
+        </table>
+    </div>
+    @*</div>*@
