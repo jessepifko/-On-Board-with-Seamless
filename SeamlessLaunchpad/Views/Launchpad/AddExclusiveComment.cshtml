@@ -5,7 +5,8 @@
 
 @model List<Comment>
 
-<h1>Add a Comment</h1>
+<h3>Add a Comment</h3>
+<div class="infoBlock"
 <p>These comments are visible ONLY to @ViewBag.UserAssoc members!</p>
 @if (Model.Count != 0)
 {
@@ -29,5 +30,6 @@
 <form action="/Launchpad/AddExclusiveComment?id=@ViewBag.StartupId" method="post">
     <input type="hidden" name="id" value="@ViewBag.StartupId" />
     <input type="text" name="Comment" required="required" placeholder="Your comments here..." />
-    <input type="submit" value="Submit" />
+    <input type="submit" class="btn btn-primary my-1 mr-sm-2" value="Submit" />
 </form>
+    </div>
