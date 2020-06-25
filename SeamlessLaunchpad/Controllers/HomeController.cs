@@ -20,12 +20,12 @@ namespace SeamlessLaunchpad.Controllers
 
         public IActionResult Index()
         {
-            return View();
+            return Redirect("/Launchpad/Index");
         }
 
         public IActionResult Privacy()
         {
-            return View();
+            return Redirect("/Launchpad/Index");
         }
 
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
