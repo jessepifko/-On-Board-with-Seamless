@@ -69,10 +69,10 @@ Filter startups:
 
     <form action="/Launchpad/GetSavedView" class="form-inline" method="get">
         <select class="custom-select my-1 mr-sm-2" name="selectedView">
-            <option selected>Choose...</option>
+            <option value="0">No Filter</option>
             @foreach (UserView view in ViewBag.UserViews)
             {
-                @Html.Raw($"<option value=\"{view.Id}\">{view.Name}</option>")
+                @Html.Raw($"<option value=\"{view.Id}\" {(view.Id.Equals(ViewBag.ViewID) ? "selected" : "")}>{view.Name}</option>")
             }
         </select><br />
         <input type="submit" class="btn btn-primary my-1 mr-sm-2" value="Select View" />

@@ -241,6 +241,14 @@ namespace SeamlessLaunchpad.Controllers
 
             List<UserView> views = _context.UserView.Where(x => x.UserId.Equals(thisUser.Id)).ToList();
             ViewBag.UserViews = new List<UserView>();
+            try
+            {
+                ViewBag.ViewID = int.Parse(viewname);
+            }
+            catch (FormatException)
+            {
+
+            }
             foreach (UserView v in views)
             {
                 ViewBag.UserViews.Add(v);
@@ -376,6 +384,10 @@ namespace SeamlessLaunchpad.Controllers
         [HttpGet]
         public async Task<IActionResult>GetSavedView(int selectedView)
         {
+            if (selectedView == 0)
+            {
+                return RedirectToAction("ViewDashboard");
+            }
             string userId = User.FindFirst(ClaimTypes.NameIdentifier).Value;
             UserView view = _context.UserView.FirstOrDefault(x => x.Id == selectedView && x.UserId.Equals(userId));
             List<ViewFilter> filters = _context.ViewFilter.Where(y => y.ViewId == view.Id).ToList();
@@ -393,6 +405,7 @@ namespace SeamlessLaunchpad.Controllers
                 }
                 first = false;
             }
+            url += $"&viewname={selectedView}";
             return Redirect(url);
         }
 
