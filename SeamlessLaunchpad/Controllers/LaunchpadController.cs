@@ -246,7 +246,7 @@ namespace SeamlessLaunchpad.Controllers
             {
                 ViewBag.ViewID = int.Parse(viewname);
             }
-            catch (FormatException)
+            catch
             {
 
             }
